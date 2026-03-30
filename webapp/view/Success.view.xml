@@ -1,0 +1,41 @@
+<mvc:View controllerName="com.applexus.finalproject.controller.Success"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core='sap.ui.core'
+    displayBlock="true">
+
+<Page id="Success" showHeader="false" class="sapUiContentPadding">
+
+<content>
+<VBox 
+    justifyContent="Center" 
+    alignItems="Center" 
+    height="100%">
+        <!-- Success Icon -->
+    <core:Icon 
+        src="sap-icon://accept" 
+        size="3rem" 
+        color="green"
+        class="sapUiMediumMarginBottom"/>
+
+
+    <!-- Title -->
+    <Title text="Booking Confirmed!" class="sapUiSmallMarginBottom"/>
+
+    <!-- Description -->
+    <Text 
+        text="Your request has been submitted. Please keep track of admin approval in your dashboard status."
+        textAlign="Center"
+        class="sapUiSmallMarginBottom"/>
+
+    <!-- Button -->
+    <Button 
+        text="Return to Inventory"
+        type="Emphasized"
+        press="onBackToInventory"/>
+
+</VBox>
+</content>
+
+</Page>
+</mvc:View>

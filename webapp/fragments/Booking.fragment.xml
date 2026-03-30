@@ -1,0 +1,119 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
+
+    <VBox >
+
+
+        <Toolbar >
+            <Title text="Booking Management" level="H2" />
+            <ToolbarSpacer />
+            
+
+            <SearchField
+                width="250px"
+                placeholder="Search..."
+                liveChange="onSearch"/>
+
+            <Select change="onFilterChange">
+                <items>
+                    <core:Item key="all" text="All Status"/>
+                    <core:Item key="pending" text="Pending"/>
+                    <core:Item key="approved" text="Approved"/>
+                    <core:Item key="rejected" text="Rejected"/>
+                </items>
+            </Select>
+        </Toolbar>
+
+        
+        <Table items="{oJson>/bookings}" class="sapUiSmallMarginTop">
+
+            <columns>
+                <Column><Text text="BOOKING ID"/></Column>
+                <Column><Text text="CUSTOMER NAME"/></Column>
+                <Column><Text text="ITEMS SELECTED"/></Column>
+                <Column><Text text="DATES"/></Column>
+                <Column><Text text="STATUS"/></Column>
+                <Column><Text text="PAYMENT STATUS"/></Column>
+                <Column><Text text="ADMIN OPTIONS"/></Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+
+                    <cells>
+
+                        
+                        <Link text="{oJson>bookingId}"/>
+
+                        
+                        <Text text="{oJson>customerName}"/>
+
+                        
+                       <VBox>
+                <List items="{oJson>items}">
+                    <items>
+                        <CustomListItem>
+                            <HBox>
+                                <Text text="{oJson>itemName}" />
+                                <Text text=" - " />
+                                <Text text="{oJson>quantity}" />
+                            </HBox>
+                        </CustomListItem>
+                    </items>
+                </List>
+    </VBox>
+
+                        <!-- Dates -->
+                        <VBox>
+                            <Text text="{oJson>startDate}"/>
+                            <Text text="{oJson>endDate}"/>
+                        </VBox>
+
+                        <!-- STATUS -->
+                        <ObjectStatus
+                            text="{oJson>status}"
+                            state="{
+                                = ${oJson>status} === 'Approved' ? 'Success' :
+                                  ${oJson>status} === 'Rejected' ? 'Error' :
+                                  'Warning'
+                            }"/>
+
+                        <!-- PAYMENT STATUS -->
+                        <ObjectStatus
+                            text="{oJson>paymentStatus}"
+                            state="{
+                                = ${oJson>paymentStatus} === 'Completed' ? 'Success' :
+                                  'Warning'
+                            }"/>
+
+                        <!-- ACTION BUTTONS -->
+                        <HBox>
+                            <Button
+                                text="Approve"
+                                type="Emphasized"
+                                press="onApprovePress"
+                                enabled="{
+                                    = ${oJson>status} === 'Pending'
+                                }"
+                                 class = "sapUiSmallMarginEnd"/>
+
+                            <Button
+                                text="Reject"
+                                type="Reject"
+                                press="onRejectPress"
+                                enabled="{
+                                    = ${oJson>status} === 'Pending'
+                                }"/>
+                        </HBox>
+
+                    </cells>
+
+                </ColumnListItem>
+            </items>
+
+        </Table>
+
+    </VBox>
+
+</core:FragmentDefinition>

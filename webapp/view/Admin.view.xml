@@ -1,0 +1,180 @@
+<!-- <mvc:View controllerName="com.applexus.finalproject.controller.Admin"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core"   
+    xmlns="sap.m">
+
+    <Page id="Admin" title="{i18n>title}">
+
+        <headerContent>
+            <Select
+                width="150px"
+                change="onStatusFilterChange"
+                items="{
+                    path: '/statusFilters'
+                }">
+                <core:Item
+                    key="{key}"
+                    text="{text}" />
+            </Select>
+        </headerContent>
+
+        <subHeader>
+            <Toolbar>
+                <SearchField
+                    width="300px"
+                    placeholder="Search Customer or ID..."
+                    search="onSearch" />
+            </Toolbar>
+        </subHeader>
+
+        <content>
+            <Table
+                id="bookingTable"
+                items="{
+                    path: '/bookings',
+                    filters: [],
+                    sorter: {
+                        path: 'bookingId'
+                    }
+                }"
+                mode="None"
+                growing="true"
+                growingThreshold="20"
+                width="100%">
+
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Booking List" />
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column>
+                        <Text text="Booking ID" />
+                    </Column>
+                    <Column>
+                        <Text text="Customer Name" />
+                    </Column>
+                    <Column>
+                        <Text text="Items Selected" />
+                    </Column>
+                    <Column>
+                        <Text text="Dates" />
+                    </Column>
+                    <Column>
+                        <Text text="Status" />
+                    </Column>
+                    <Column>
+                        <Text text="Admin Options" />
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem>
+                    
+                        <cells>
+                            <Link
+                                text="{bookingId}"
+                                press="onBookingIdPress" />
+                            <Text text="{customerName}" />
+                            
+                           
+                            <VBox>
+                                <items>
+                                    <ObjectListItem
+                                        title="{itemName}"
+                                        number="{quantity}"
+                                        numberUnit="pcs"
+                                        type="Inactive"
+                                        visible="true"
+                                        >
+                                        <attributes>
+                                            <ObjectAttribute text="{itemName} ({quantity})" />
+                                        </attributes>
+                                    </ObjectListItem>
+                                </items>
+                            </VBox>
+
+                         
+                            <VBox>
+                                <items>
+                                    <Text text="{startDate}" />
+                                    <Text text="{endDate}" />
+                                </items>
+                            </VBox>
+
+                            
+                            <ObjectStatus
+                                text="{status}"
+                                state="{
+                                    path: 'status',
+                                    formatter: '.statusStateFormatter'
+                                }" />
+
+                           
+                            <HBox
+                                justifyContent="Start"
+                                alignItems="Center"
+                                spacing="Small">
+                                <Button
+                                    text="Approve"
+                                    type="Accept"
+                                    press="onApprove"
+                                    enabled="{= ${status} === 'Pending' }" />
+                                <Button
+                                    text="Reject"
+                                    type="Reject"
+                                    press="onReject"
+                                    enabled="{= ${status} === 'Pending' }" />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+
+
+
+
+       </Page>
+</mvc:View> -->
+<mvc:View controllerName="com.applexus.finalproject.controller.Admin"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core"   
+    xmlns="sap.m">
+
+    <Page id="Admin" title="{i18n>title}">
+
+    <headerContent>
+        <Button 
+            text="Logout" 
+            icon="sap-icon://log"
+            press="onLogoutPress"/>
+    </headerContent>
+
+<IconTabBar>
+
+    <items>
+
+        <IconTabFilter text="Booking">
+            <core:Fragment fragmentName="com.applexus.finalproject.fragments.Booking" type="XML"/>
+        </IconTabFilter>
+
+        <IconTabFilter text="Return">
+            <core:Fragment fragmentName="com.applexus.finalproject.fragments.Return" type="XML"/>
+        </IconTabFilter>
+
+        <IconTabFilter text="Payment">
+            <core:Fragment fragmentName="com.applexus.finalproject.fragments.Payment" type="XML"/>
+        </IconTabFilter>
+
+        <IconTabFilter text="Inventory">
+            <core:Fragment fragmentName="com.applexus.finalproject.fragments.Inventory" type="XML"/>
+        </IconTabFilter>
+        <!-- <Button text="Logout"/> -->
+    </items>
+         
+</IconTabBar>
+
+       </Page>
+</mvc:View> 

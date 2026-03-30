@@ -1,0 +1,101 @@
+<mvc:View controllerName="com.applexus.finalproject.controller.Userbook"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+<Page id="Userbook" title="Booking Details">
+
+    <content>
+        <VBox class="sapUiMediumMargin">
+
+            <!-- Header -->
+            <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginBottom">
+                <Title text="Booking Details"/>
+                
+            </HBox>
+
+            <!-- ITEMS -->
+            <List items="{booking>/items}" class="sapUiSmallMarginTop" >
+
+                <CustomListItem>
+                    <VBox class="sapUiSmallMarginBottom sapUiResponsiveMargin">
+
+                        <!-- Item Header -->
+                        <HBox justifyContent="SpaceBetween">
+                            <VBox>
+                                <Text text="{booking>name}" />
+                                <Text text="{= ${booking>type} + ' • INR ' + ${booking>price} + '/day' }"/>
+                            </VBox>
+
+                            <VBox alignItems="End">
+                                <Text text="RENTAL QTY"/>
+                                <Input value="{booking>qty}" width="60px"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Dates -->
+                        <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
+
+                            <VBox width="48%">
+                                <Text text="START DATE"/>
+                                <DatePicker 
+                                    value="{booking>startDate}" 
+                                    valueFormat="yyyy-MM-dd"
+                                    displayFormat="dd-MM-yyyy"
+                                    change="onDateChange"/>
+                            </VBox>
+
+                            <VBox width="48%">
+                                <Text text="END DATE"/>
+                                <DatePicker 
+                                    value="{booking>endDate}" 
+                                    valueFormat="yyyy-MM-dd"
+                                    displayFormat="dd-MM-yyyy"
+                                    change="onDateChange"/>
+                            </VBox>
+
+                        </HBox>
+
+                    </VBox>
+                </CustomListItem>
+
+            </List>
+
+            <!-- SUMMARY BOX -->
+            <VBox class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiResponsiveMargin">
+
+                <HBox justifyContent="SpaceBetween">
+                    <Text text="Total Rent:"/>
+                <Text text="{= 'INR ' + ${booking>/totalRent} }"/>
+                </HBox>
+
+                <HBox justifyContent="SpaceBetween">
+                    <Text text="Security Deposit:"/>
+                    <Text text="{= 'INR ' + ${/deposit} }"/>
+                </HBox>
+
+                <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
+                    <Text text="Total Payable:"/>
+                    <ObjectStatus text="{= 'INR ' + ${booking>/total} }" state="Success"/>
+                </HBox>
+
+            </VBox>
+
+            <!-- TERMS -->
+            <VBox class="sapUiSmallMarginTop">
+                <Title text="Terms &amp; Conditions"/>
+
+                <CheckBox id="cb1" text="I agree that there is no cancellation." select="onTermsChange"/>
+                <CheckBox id="cb2" text="I agree to pay a fine for late return." select="onTermsChange"/>
+                <CheckBox id="cb3" text="I verify that all items will be returned in original condition." select="onTermsChange"/>
+            </VBox>
+
+            <!-- FOOTER -->
+            <HBox justifyContent="End" class="sapUiMediumMarginTop">
+                <Button text="Back" class="sapUiTinyMarginEnd" press="onBack"/>
+                <Button text="Book Now"  id = "book" type="Emphasized" enabled="false" press="onBookNow"/>
+            </HBox>
+
+        </VBox>
+    </content>
+
+    </Page>
+</mvc:View>

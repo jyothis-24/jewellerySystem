@@ -1,0 +1,155 @@
+{
+  "_version": "1.48.0",
+  "sap.app": {
+    "id": "com.applexus.finalproject",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.20.4",
+      "toolsId": "5a62fc88-7b8e-43a8-8548-0d894418d683"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZB18_G4_JRS_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      }
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.108.50",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.applexus.finalproject.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "com.applexus.finalproject.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "name": "RouteLogin",
+          "pattern": ":?query:",
+          "target": "TargetLogin"
+        },
+        {
+          "name": "RouteSignup",
+          "pattern": "signup",
+          "target": "TargetSignup"
+        },
+        {
+          "name": "RouteAdmin",
+          "pattern": "admin",
+          "target": "TargetAdmin"
+        },
+        {
+          "name": "RouteUser",
+          "pattern": "user",
+          "target": "TargetUser"
+        },
+        {
+          "name": "RouteUserbook",
+          "pattern": "book",
+          "target": "TargetUserbook"
+        },
+        {
+          "name": "RouteStatus",
+          "pattern": "status",
+          "target": "TargetStatus"
+        },
+        {
+          "name": "RouteSuccess",
+          "pattern": "bookSuccess",
+          "target": "TargetSuccess"
+        }
+      ],
+      "targets": {
+        "TargetLogin": {
+          "viewId": "Login",
+          "viewName": "Login",
+          "transition": "slide"
+        },
+        "TargetSignup": {
+          "viewId": "Signup",
+          "viewName": "Signup",
+          "transition": "slide"
+        },
+        "TargetAdmin": {
+          "viewId": "Admin",
+          "viewName": "Admin",
+          "transition": "slide"
+        },
+        "TargetUser": {
+          "viewId": "User",
+          "viewName": "User",
+          "transition": "slide"
+        },
+        "TargetUserbook": {
+          "viewId": "Userbook",
+          "viewName": "Userbook",
+          "transition": "slide"
+        },
+        "TargetStatus": {
+          "viewId": "Status",
+          "viewName": "Status",
+          "transition": "slide"
+        },
+        "TargetSuccess": {
+          "viewId": "Success",
+          "viewName": "Success",
+          "transition": "slide"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "com.applexus.finalproject.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    }
+  }
+}

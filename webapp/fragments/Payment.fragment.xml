@@ -1,0 +1,67 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
+
+    <VBox class="sapUiSmallMargin">
+
+        <!-- Header -->
+        <HBox justifyContent="SpaceBetween" alignItems="Center">
+            <Title text="Payment Monitoring" level="H2"/>
+
+            <HBox>
+                <SearchField
+                    width="200px"
+                    placeholder="Search Customer..."
+                    liveChange="onSearchPay"/>
+                    
+                <Button text="Filter" press="onFilterPress"/>
+            </HBox>
+        </HBox>
+
+        <!-- Table -->
+        <Table items="{oJson>/bookings}" class="sapUiMediumMarginTop">
+
+            <columns>
+                <Column><Text text="Booking ID"/></Column>
+                <Column><Text text="Customer"/></Column>
+                <Column><Text text="Rent Amount"/></Column>
+                <Column><Text text="Pay Date"/></Column>
+                <Column><Text text="Deposit"/></Column>
+                <Column><Text text="Total Paid"/></Column>
+                <Column><Text text="Status"/></Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+                    <cells>
+
+                        <ObjectIdentifier title="{oJson>bookingId}"/>
+
+                        <Text text="{oJson>customerName}"/>
+
+                        <Text text="₹ {oJson>rentAmount}"/>
+
+                        <Text text="{oJson>payDate}"/>
+
+                        <Text text="₹ {oJson>deposit}"/>
+
+                        <Text text="₹ {oJson>totalPaid}"/>
+
+                        <ObjectStatus
+                            text="{oJson>paymentStatus}"
+                            state="{
+                                = ${oJson>paymentStatus} === 'Completed' ? 'Success' :
+                                  ${oJson>paymentStatus} === 'Pending' ? 'Warning' : 'None'
+                            }"/>
+
+                    </cells>
+                </ColumnListItem>
+            </items>
+
+        </Table>
+
+    </VBox>
+
+
+</core:FragmentDefinition>

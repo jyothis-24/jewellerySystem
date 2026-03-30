@@ -1,0 +1,81 @@
+<mvc:View controllerName="com.applexus.finalproject.controller.User"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+
+     <Page id="page" title="Jewellery Rental">
+
+        <content>
+            <VBox class="sapUiSmallMargin">
+            
+
+                <!-- Search Bar -->
+              <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
+
+    <!-- Left: Search -->
+    <SearchField 
+        placeholder="Search items..." 
+        width="800px"
+        liveChange="onSearch"/>
+
+    <!-- Right: Status Button -->
+    <Button 
+        text="Status" 
+        icon="sap-icon://paper-plane"
+        width="100px"
+        type="Transparent"
+        press="onStatus"/>
+
+</HBox>
+
+                <!-- List -->
+                <List id="itemList" items="{/ZIB18_G4_ITEM}" >
+
+                    <CustomListItem>
+                        <HBox justifyContent="SpaceBetween" alignItems="Center"
+                         class="sapUiSmallMarginBeginEnd">
+
+                            <!-- Left Side -->
+                            <VBox>
+                                <HBox alignItems="Center">
+                                    <CheckBox    
+                                        id="cbSelect"
+                                        enabled="{= (${available_qty} - ${item_lost}) > 0 }"/>
+                                    <Text text="{item_name}" class="sapUiSmallMarginBegin"/>
+                                </HBox>
+                                <Text text="Category : {category}" />    
+                                <Text text="Quantity: {available_qty}" />
+                                <ObjectStatus text="{type}" state="Information"/>
+                            </VBox>
+
+                            <!-- Right Side -->
+                            <VBox alignItems="End">
+                                <Text text="{rent_per_day} / day"/>
+                                <Text text="{curr_key}" class="sapUiTinyMarginBottom"/>
+
+                                <ObjectStatus 
+                                    text="{= (${available_qty} - ${item_lost}) > 0 ? 'Available' : 'Unavailable'}" 
+                                    state="{= (${available_qty} - ${item_lost}) > 0 ? 'Success' : 'Error'}"/>
+
+                                <Button text="Preview" type="Emphasized" press="onPreview"/>
+                            </VBox>
+
+                        </HBox>
+                    </CustomListItem>
+
+                </List>
+
+                <!-- Next Button -->
+               
+            <HBox justifyContent="End" class="sapUiMediumMarginTop">
+                 <Button 
+                    text="Next" 
+                    type="Emphasized" 
+                    width="60px"
+                    press="onNext"/>
+            </HBox>
+
+            </VBox>
+        </content>
+
+    </Page>
+</mvc:View>

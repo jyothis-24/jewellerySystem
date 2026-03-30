@@ -1,0 +1,117 @@
+<mvc:View
+    controllerName="com.applexus.finalproject.controller.Signup"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    displayBlock="true">
+
+    <Page id="Signup" title="{i18n>title}">
+
+        <content>
+            <FlexBox 
+                width="100%" 
+                height="100%"
+                alignItems="Center" 
+                justifyContent="Center">
+
+                <Panel 
+                    width="400px"
+                    class="sapUiResponsiveMargin"
+                    backgroundDesign="Solid">
+
+                    <content>
+
+                        <VBox class="sapUiMediumMargin" alignItems="Center">
+
+                            
+                            <Image 
+                                src="../images/logo.png"
+                                width="60px"
+                                class="sapUiSmallMarginBottom"/>
+
+                            
+                            <Title text="Jewellery Rental" level="H3"/>
+                            <Text text="Create your account"
+                                  class="sapUiSmallMarginBottom"/>
+
+                           
+                            <VBox width="100%" class="sapUiMediumMarginTop">
+
+                                
+                                <HBox width="100%" justifyContent="SpaceBetween">
+                                    <VBox width="48%">
+                                        <Label text="Full Name"/>
+                                        <Input placeholder="Enter your name" value = "{userModel>/user/Name}"/>
+                                    </VBox>
+
+                                    <VBox width="48%">
+                                        <Label text="Phone"/>
+                                        <Input  id="phid"
+                                                type="Tel" 
+                                                placeholder="Enter phone number" 
+                                                value = "{userModel>/user/Phone}"/>
+                                    </VBox>
+                                </HBox>
+
+                                
+                                <Label  text="Email Address" 
+                                        class="sapUiSmallMarginTop"/>
+                                <Input  id="emailId"
+                                        type="Email"
+                                        placeholder="e.g. name@example.com" 
+                                        value = "{userModel>/user/Email}" />
+
+                                
+                                <Label text="Residential Address" 
+                                        class="sapUiSmallMarginTop"/>
+                                <TextArea 
+                                        placeholder="Enter your full address"
+                                        rows="3" 
+                                        width="100%" 
+                                        value = "{userModel>/user/Address}" />
+
+                               
+                                <Label text="Password" 
+                                        class="sapUiSmallMarginTop"/>
+                                <Input  id="pid1"
+                                        type="Password" 
+                                        placeholder="Enter password"
+                                        liveChange="validateFields"
+                                        value = "{userModel>/user/Password}" />
+
+                                
+                                <Label text="Confirm Password" 
+                                        class="sapUiSmallMarginTop"/>
+                                <Input  id="pid2"
+                                        type="Password" 
+                                        placeholder="Confirm password"
+                                        value = "{userModel>/user/ConfirmPassword}" />
+
+                                
+                                <Button 
+                                    text="Sign Up"
+                                    type="Emphasized"
+                                    width="100%"
+                                    class="sapUiMediumMarginTop"
+                                    press="onSignup"/>
+
+                               
+                                <HBox 
+                                    justifyContent="Center"
+                                    class="sapUiSmallMarginTop">
+
+                                    <Text text="Already have an account? "/>
+                                    <Link text="Sign In" press="onLogin"/>
+                                </HBox>
+
+                            </VBox>
+
+                        </VBox>
+
+                    </content>
+                </Panel>
+
+            </FlexBox>
+        </content>
+
+    </Page>
+</mvc:View>

@@ -1,0 +1,227 @@
+
+<core:FragmentDefinition
+    controllerName="my.app.controller.ReturnSplit"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core">
+
+    <SplitApp id="idSplitApp">
+        <masterPages>
+            <Page title="Returns">
+                <subHeader>
+                    <OverflowToolbar>
+                        <SearchField placeholder="Search customer..." width="100%" />
+                    </OverflowToolbar>
+                </subHeader>
+                <List id="idMasterList">
+                    <CustomListItem type="Active" class="sapUiSmallMargin">
+                        <HBox justifyContent="SpaceBetween">
+                            <VBox>
+                                <Text text="BK-9925" fontBold="true" color="Highlight" />
+                                <Title text="Vijayalakshmi" level="H4" />
+                                <Text text="Items: 2 • Due: Mar 30" fontItalic="true" />
+                            </VBox>
+                            <ObjectStatus text="Active" state="Success" />
+                        </HBox>
+                    </CustomListItem>
+                </List>
+            </Page>
+        </masterPages>
+
+        <detailPages>
+            <Page title="Return Details">
+                <content>
+                    <VBox class="sapUiMediumMargin">
+                        <Title text="Return Details" titleStyle="H2" />
+                        <Text text="Reviewing items for Booking BK-9925" color="Primary" class="sapUiSmallMarginBottom" />
+
+                        <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="12">
+                            <f:content>
+                                <l:VerticalLayout>
+                                    <Label text="Customer ID" />
+                                    <Input value="CUST-7742" editable="false" />
+                                </l:VerticalLayout>
+                                <l:VerticalLayout>
+                                    <Label text="Customer Name" />
+                                    <Input value="Vijayalakshmi" editable="false" />
+                                </l:VerticalLayout>
+                                <l:VerticalLayout>
+                                    <Label text="Actual Return Date" />
+                                    <DatePicker placeholder="dd-mm-yyyy" />
+                                </l:VerticalLayout>
+                            </f:content>
+                        </f:SimpleForm>
+
+                        <Table items="{/ReturnItems}" class="sapUiMediumMarginTop borderTable">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <Title text="Return Items Verification" level="H4" />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column><Text text="Item Description" /></Column>
+                                <Column hAlign="Center"><Text text="Qty" /></Column>
+                                <Column><Text text="Return Status" /></Column>
+                                <Column><Text text="Condition" /></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <VBox>
+                                            <Text text="{Description}" fontBold="true" />
+                                            <Text text="{SubText}" class="sapUiTinyMarginTop" />
+                                        </VBox>
+                                        <Text text="{Qty}" color="Highlight" />
+                                        <Select selectedKey="{Status}" width="100%">
+                                            <core:Item key="Returned" text="Returned" />
+                                            <core:Item key="Missing" text="Missing" />
+                                            <core:Item key="Partial" text="Partial" />
+                                        </Select>
+                                        <Select selectedKey="{Condition}" width="100%">
+                                            <core:Item key="Good" text="Good" />
+                                            <core:Item key="Damaged" text="Damaged" />
+                                        </Select>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+
+                        <HBox justifyContent="End" class="sapUiMediumMarginTop">
+                            <Button text="Complete Return" type="Emphasized" press="onCompleteReturn" />
+                        </HBox>
+                    </VBox>
+                </content>
+            </Page>
+        </detailPages>
+    </SplitApp>
+</core:FragmentDefinition>
+
+
+ 
+<!-- <core:FragmentDefinition
+    controllerName="com.applexus.finalproject.controller.Admin"
+    xmlns:mvc="sap.ui.core.mvc"   
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Page title="Returns" class="sapUiNoContentPadding">
+
+        <content>
+            <HBox width="100%">
+
+              
+                <VBox width="25%" class="sapUiSmallMargin">
+
+                    <SearchField
+                        width="100%"
+                        placeholder="Search customer..."
+                        liveChange="onSearch"/>
+
+                    <List
+                        items="{oJson>/bookings}"
+                        mode="SingleSelectMaster"
+                        selectionChange="onSelectBooking">
+
+                        <StandardListItem
+                            title="{oJson>bookingId}"
+                            description="{customerName}"
+                            info="{oJson>status}"
+                            infoState="Success"/>
+                    </List>
+
+                </VBox>
+
+             
+                <VBox width="75%" class="sapUiMediumMargin">
+
+                  
+                    <Title text="Return Details" level="H2"/>
+                    <Text text="Reviewing items for Booking {selectedBooking/bookingId}" class="sapUiSmallMarginBottom"/>
+
+                
+                    <HBox class="sapUiSmallMarginTop" justifyContent="SpaceBetween">
+
+                        <VBox width="30%">
+                            <Label text="Customer ID"/>
+                            <Input value="{oJson>customerId}" editable="false"/>
+                        </VBox>
+
+                        <VBox width="30%">
+                            <Label text="Customer Name"/>
+                            <Input value="{oJson>customerName}" editable="false"/>
+                        </VBox>
+
+                        <VBox width="30%">
+                            <Label text="Actual Return Date"/>
+                            <DatePicker value="{oJson>endDate}" displayFormat="dd-MM-yyyy"/>
+                        </VBox>
+
+                    </HBox>
+
+                
+                    <Title text="Return Items Verification" level="H4" class="sapUiMediumMarginTop"/>
+
+                  
+                    <Table items="{
+    path: 'oJson>/items',
+    templateShareable: false
+}" class="sapUiSmallMarginTop">
+
+    <columns>
+        <Column><Text text="Item Description"/></Column>
+        <Column><Text text="Qty"/></Column>
+        <Column><Text text="Return Status"/></Column>
+        <Column><Text text="Condition"/></Column>
+    </columns>
+
+                        <items>
+                            <ColumnListItem>
+
+                                <cells>
+                                    <VBox>
+                                        <Text text="{oJson>itemName}"/>
+                                        <Text text="{oJson>description}" class="sapUiTinyMarginTop"/>
+                                    </VBox>
+
+                                    <Text text="{qty}"/>
+
+                                    <Select selectedKey="{oJson>Status}" change="onStatusChange">
+                                        <items>
+                                            <core:Item key="Returned" text="Returned"/>
+                                            <core:Item key="Missing" text="Missing"/>
+                                            <core:Item key="Partial" text="Partial"/>
+                                        </items>
+                                    </Select>
+
+                                    <Select selectedKey="{oJson>condition}">
+                                        <items>
+                                            <core:Item key="Good" text="Good"/>
+                                            <core:Item key="Damaged" text="Damaged"/>
+                                        </items>
+                                    </Select>
+
+                                </cells>
+
+                            </ColumnListItem>
+                        </items>
+
+                    </Table>
+
+                  
+                    <HBox justifyContent="End" class="sapUiMediumMarginTop">
+                        <Button
+                            text="Complete Return"
+                            type="Emphasized"
+                            press="onCompleteReturn"/>
+                    </HBox>
+
+                </VBox>
+
+            </HBox>
+        </content>
+
+    </Page>
+
+</core:FragmentDefinition> -->

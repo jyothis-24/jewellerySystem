@@ -1,0 +1,83 @@
+<mvc:View controllerName="com.applexus.finalproject.controller.Login"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    >
+    <Page id="login" title="{i18n>title}">
+
+        <content>
+
+            <FlexBox 
+                width="100%" 
+                height="100%"
+                alignItems="Center" 
+                justifyContent="Center">
+
+                <Panel 
+                    width="350px"
+                    class="sapUiResponsiveMargin"
+                    backgroundDesign="Translucent">
+
+                    <content>
+
+                        <VBox 
+                            alignItems="Center" 
+                            justifyContent="Center"
+                            class="sapUiMediumMargin">
+
+                            
+                            <Image 
+                                src="../images/logo.png"
+                                width="100px"
+                                class="sapUiSmallMarginBottom"/>
+
+                            
+                            <Text 
+                                text="Jewellery Rental Management System"
+                                textAlign="Center"
+                                class="sapUiMediumMarginBottom"/>
+
+                            
+                            <VBox width="100%">
+
+                                <Label text="Email"/>
+                                <Input 
+                                    placeholder="Enter your email"
+                                    value="{login>/email}"
+                                     class="sapUiSmallMarginBottom"/>
+
+                                <Label text="Password"/>
+                                <Input 
+                                    type="Password"
+                                    value="{login>/password}"
+                                    placeholder="Enter your password"
+                                    class="sapUiMediumMarginBottom"/>
+
+                                
+                                <Button 
+                                    text="Login"
+                                    press="onLogin"
+                                    type="Emphasized"
+                                    width="100%"/>
+
+                            </VBox>
+
+                        </VBox>
+                       <HBox 
+                            justifyContent="Center"
+                            alignItems="Center"
+                            class="sapUiSmallMarginTop">
+
+                            <Text text="New here?"/>
+                            <Link text="Create an account" press="onSignup"/>
+                    </HBox>
+                    </content>
+                </Panel>
+
+            </FlexBox>
+
+        </content>
+
+
+       
+    </Page>
+</mvc:View>
