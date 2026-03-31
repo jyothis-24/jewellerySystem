@@ -8,6 +8,7 @@ sap.ui.define([
     "use strict";
 
     return Controller.extend("com.applexus.finalproject.controller.User", {
+
       onInit: function () {
 
         },
@@ -36,91 +37,105 @@ sap.ui.define([
 
             onPreview: function (oEvent) {
                     debugger
-            var oContext = oEvent.getSource().getBindingContext();
-            this.loadFragment({
-                    name: "com.applexus.finalproject.fragments.Popup",
-                    controller: this
-                }).then(function (oPopup) { //Need to Create Controls Inside the popup ( if we use dialogue control in popup view the comment make sense)
-                      if (!oPopup) {
-        console.error("Popup not loaded!");
-        return;
-    }      
+                    var oContext = oEvent.getSource().getBindingContext();
+                    this.loadFragment({
+                            name: "com.applexus.finalproject.fragments.Popup",
+                            controller: this
+                        }).then(function (oPopup) { //Need to Create Controls Inside the popup ( if we use dialogue control in popup view the comment make sense)
+                            if (!oPopup) {
+                                    sap.m.MessageToast("Image Can't Load")
+                                    return;
+                            }      
                      
-        oPopup.setTitle("Image Preview");
+                    oPopup.setTitle("Image Preview");
 
         
-        oPopup.setBindingContext(oContext);
-        var sUrl = oContext.getProperty("image_url");  // get the image URL
-        // // Clear old content
-        // oPopup.removeAllContent();
+                    oPopup.setBindingContext(oContext);
+                    var sUrl = oContext.getProperty("image_url");  // get the image URL
+                    // Clear old content
+                    oPopup.removeAllContent();
 
-        // Add image
-        oPopup.addContent(new sap.m.Image({
-            src: sUrl,
-            width: "100%"
-        }));
+                    // Add image
+                    oPopup.addContent(new sap.m.Image({
+                        src: sUrl,
+                        width: "100%"
+                    }));
 
-        // Close button
-        oPopup.setEndButton(new sap.m.Button({
-            text: "Close",
-            press: function () {
-                oPopup.close();
-            }
-        }));
+                    // Close button
+                    oPopup.setEndButton(new sap.m.Button({
+                        text: "Close",
+                        press: function () {
+                            oPopup.close();
+                        }
+                    }));
 
-        oPopup.open();
-    });
-},
-    onStatus: function(){
+                    oPopup.open();
+                });
+        },
+        onStatus: function(){
             var oRouter = this.getOwnerComponent().getRouter();
             oRouter.navTo("RouteStatus");
         },
-onNext: function () {
-    const oList = this.byId("itemList");
-    const aItems = oList.getItems();
-    const aSelected = [];
+        onNext: function () {
+            const oList = this.byId("itemList");
+            const aItems = oList.getItems();
+            const aSelected = [];
 
-    aItems.forEach(function (oItem) {
+            aItems.forEach(function (oItem) {
 
-        //  Safely get CheckBox
-        const oHBox = oItem.getContent()[0];
-        const oVBox = oHBox.getItems()[0];
-        const oInnerHBox = oVBox.getItems()[0];
-        const oCheckBox = oInnerHBox.getItems()[0];
+                //  Safely get CheckBox
+                const oHBox = oItem.getContent()[0];
+                const oVBox = oHBox.getItems()[0];
+                const oInnerHBox = oVBox.getItems()[0];
+                const oCheckBox = oInnerHBox.getItems()[0];
 
-        if (oCheckBox.getSelected()) {
-            const oCtx = oItem.getBindingContext();
-            const oData = oCtx.getObject();
+                if (oCheckBox.getSelected()) {
+                    debugger;
+                    const oCtx = oItem.getBindingContext();
+                    const oData = oCtx.getObject();
 
-            aSelected.push({
-                id: oData.item_id,
-                name: oData.item_name,
-                type: oData.type,
-                price: oData.rent_per_day,
-                qty: 1,
-                startDate: new Date().toISOString().split("T")[0],
-                endDate: new Date().toISOString().split("T")[0]
+                    aSelected.push({
+                        id: oData.item_id,
+                        name: oData.item_name,
+                        type: oData.type,
+                        price: oData.rent_per_day,
+                        deposit:oData.deposit,
+                        curr_key: oData.curr_key, 
+                        qty: 1,
+                        availableQty: oData.available_qty - oData.item_lost, 
+                        startDate: new Date().toISOString().split("T")[0],
+                        endDate: new Date().toISOString().split("T")[0],
+                        // endDate: (function() {
+                        //         var d = new Date();
+                        //         d.setDate(d.getDate() + 1); // add 1 day
+                        //         return d.toISOString().split("T")[0];
+                        //     })()
+                    });
+                }
             });
+
+            if (aSelected.length === 0) {
+                sap.m.MessageToast.show("Select at least one item");
+                return;
+            }
+
+            // JSON model
+            const oModel = new sap.ui.model.json.JSONModel({
+                items: aSelected,
+                totalRent: 0,
+                totalDeposit: 0,
+                total: 0,
+                curr_key: aSelected[0].curr_key // take from first item key
+                
+            });
+
+            this.getOwnerComponent().setModel(oModel, "booking");
+            this.getOwnerComponent().getRouter().navTo("RouteUserbook");
+        },
+        onLogoutPress:function(){
+                var oRouter = this.getOwnerComponent().getRouter();
+                oRouter.navTo("RouteLogin")
         }
-    });
-
-    if (aSelected.length === 0) {
-        sap.m.MessageToast.show("Select at least one item");
-        return;
-    }
-
-    // JSON model
-    const oModel = new sap.ui.model.json.JSONModel({
-        items: aSelected,
-        totalRent: 0,
-        deposit: 0,
-        total: 0,
-        isEnabled: false
-    });
-
-    this.getOwnerComponent().setModel(oModel, "booking");
-    this.getOwnerComponent().getRouter().navTo("RouteUserbook");
-}
 
     });
 });

@@ -1,82 +1,154 @@
+
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/MessageToast"
-], function (Controller, JSONModel, Filter, FilterOperator, MessageToast) {
+], function (Controller, Filter, FilterOperator, MessageToast) {
     "use strict";
 
     return Controller.extend("com.applexus.finalproject.controller.Status", {
-      onInit: function () {
+        onInit: function () {
+            var oODataModel = this.getOwnerComponent().getModel(); // OData model
+            var that = this;
 
-            var oData = {
-                bookings: [
-                    { bookingId: "BK-9021", summary: "Gold Chain x1", amount: 700, status: "PENDING" },
-                    { bookingId: "BK-8842", summary: "Necklace x1, Rings x2 + 2 more...", amount: 2400, status: "PARTIALLY APPROVED" },
-                    { bookingId: "BK-7710", summary: "Bangles Set x1", amount: 2600, status: "REJECTED" },
-                    { bookingId: "BK-4420", summary: "Silver Earrings x4", amount: 1200, status: "APPROVED" },
-                    { bookingId: "BK-1055", summary: "Classic Watch x1", amount: 5000, status: "PENDING" }
-                ]
-            };
+            oODataModel.read("/ZIB18_G4_USER_STATUS", {
+                success: function (oData) {
 
-            var oModel = new JSONModel(oData);
-            this.getView().setModel(oModel);
-        },
+                    var aData = oData.results || [];
 
-        onSearch: function (oEvent) {
-            var sValue = oEvent.getParameter("newValue");
+                    var oGrouped = [];
+                    var oMap = {};
 
-            var aFilters = [
-                new Filter("bookingId", FilterOperator.Contains, sValue),
-                new Filter("summary", FilterOperator.Contains, sValue)
-            ];
+                    aData.forEach(function(item) {
+                        if (!oMap[item.booking_id]) {
+                            oMap[item.booking_id] = {
+                                booking_id: item.booking_id,
+                                items: [],
+                                total_payable: item.total_payable,
+                                booking_status: item.booking_status
+                            };
+                            oGrouped.push(oMap[item.booking_id]);
+                        }
+                        oMap[item.booking_id].items.push(item.item_name);
+                    });
 
-            var oFilter = new Filter({
-                filters: aFilters,
-                and: false
-            });
+                    //  Create JSON model for grouped data
+                    var oJsonModel = new sap.ui.model.json.JSONModel({
+                        GroupedBookings: oGrouped
+                    });
 
-            var oList = this.byId().getContent()[1];
-            oList.getBinding("items").filter(oFilter);
-        },
+                    that.getView().setModel(oJsonModel, "grouped");
+                },
 
-        onFilter: function (oEvent) {
-            var sKey = oEvent.getParameter("selectedItem").getKey();
+                error: function () {
+                    sap.m.MessageToast.show("Failed to load data");
+                }
+        });
+    },
 
-            var oTable = this.byId().getContent()[1];
-            var oBinding = oTable.getBinding("items");
-
-            if (sKey === "ALL") {
-                oBinding.filter([]);
-            } else {
-                oBinding.filter([new Filter("status", FilterOperator.Contains, sKey)]);
-            }
-        },
-        formatStatusState: function(status) {
-                switch (status) {
-                    case "APPROVED":
-                        return sap.ui.core.ValueState.Success;
-                    case "REJECTED":
-                        return sap.ui.core.ValueState.Error;
-                    case "PARTIALLY APPROVED":
-                        return sap.ui.core.ValueState.Information;
+            // Formatter to map booking_status to UI ObjectStatus states
+            formatStatusState: function (sStatus) {
+                switch (sStatus) {
+                    case "P":
+                        return "Warning";
+                    case "A":
+                        return "Success";
+                    case "R":
+                        return "Error";
+                    case "PARTIAL":
+                        return "Information";
                     default:
-                        return sap.ui.core.ValueState.Warning;
+                        return "None";
+                }
+            },
+            // Live search handler
+            onSearch: function (oEvent) {
+                        var sValue = oEvent.getParameter("newValue");
+                        var oTable = this.byId("tableId");
+                        var oBinding = oTable.getBinding("items");
+
+                        if (!oBinding) {
+                            return; // safety check
+                        }
+
+                        var aFilters = [];
+
+                        if (sValue && sValue.length > 0) {
+                            // Create filters for multiple fields
+                            var oFilter1 = new Filter("item_name", FilterOperator.Contains, sValue);
+                            var oFilter2 = new Filter("booking_id", FilterOperator.Contains, sValue);
+
+                            // Combine them with OR logic
+                            var oMaster = new Filter({
+                                filters: [oFilter1, oFilter2],
+                                and: false // false means OR
+                            });
+
+                            // Add to the array of filters for binding
+                            aFilters.push(oMaster);
+                        }
+                        oBinding.filter(aFilters);
+                    },
+            // Filter Based on the status
+            onFilter: function (oEvent) {
+            
+                    const sKey = oEvent.getParameter("selectedItem").getKey();
+                    const oTable = this.byId("tableId");
+                    const oBinding = oTable.getBinding("items");
+
+                    if (!oBinding) return;
+
+                    if (sKey === "ALL") {
+                        oBinding.filter([]);
+                        return;
                     }
+
+                    // Map select key to DB value
+                    const statusMap = {
+                        "PENDING": "P",
+                        "APPROVED": "A",
+                        "REJECTED": "R",
+                        "PARTIAL": "PA"
+                    };
+
+                    const dbValue = statusMap[sKey];
+
+                    const oStatusFilter = new Filter("booking_status", FilterOperator.EQ, dbValue);
+                    oBinding.filter([oStatusFilter]);
+            },
+        // Back navigation
+        onNavBack: function () {
+            const oRouter = this.getOwnerComponent().getRouter();
+            oRouter.navTo("RouteUser");  // Adjust target route name as per your routing config
         },
 
-        onPayNow: function () {
-            MessageToast.show("Pay Now clicked");
+        // Pay Now button press handler
+        onPayNow: function (oEvent) {
+            const oButton = oEvent.getSource();
+            const oContext = oButton.getBindingContext();
+
+            if (!oContext) {
+                MessageToast.show("No booking selected");
+                return;
+            }
+
+            // Implement  pay logic here
+            MessageToast.show("Pay Now clicked for booking: " + oContext.getProperty("booking_id"));
         },
 
-        onViewFine: function () {
-            MessageToast.show("View Fine clicked");
-        },
-        onNavBack: function() {
-            debugger;
-            var oRoute = this.getOwnerComponent().getRouter();
-            oRoute.navTo("RouteUser")
+        // View Fine button press handler
+        onViewFine: function (oEvent) {
+            const oButton = oEvent.getSource();
+            const oContext = oButton.getBindingContext();
+
+            if (!oContext) {
+                MessageToast.show("No booking selected");
+                return;
+            }
+
+            // Implement your fine view logic here
+            MessageToast.show("View Fine clicked for booking: " + oContext.getProperty("booking_id"));
         }
 
     });

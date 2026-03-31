@@ -22,12 +22,11 @@
                         <HBox justifyContent="SpaceBetween">
                             <VBox>
                                 <Text text="{booking>name}" />
-                                <Text text="{= ${booking>type} + ' • INR ' + ${booking>price} + '/day' }"/>
+                                <Text text = "{= ${booking>type} + ' ' + ${booking>curr_key} + ' ' + ${booking>price} + '/day' }" />
                             </VBox>
-
                             <VBox alignItems="End">
                                 <Text text="RENTAL QTY"/>
-                                <Input value="{booking>qty}" width="60px"/>
+                                <Input change='onQuantChange' value="{booking>qty}" width="60px"/>
                             </VBox>
                         </HBox>
 
@@ -40,7 +39,7 @@
                                     value="{booking>startDate}" 
                                     valueFormat="yyyy-MM-dd"
                                     displayFormat="dd-MM-yyyy"
-                                    change="onDateChange"/>
+                                    change="onDateChange" />
                             </VBox>
 
                             <VBox width="48%">
@@ -64,17 +63,17 @@
 
                 <HBox justifyContent="SpaceBetween">
                     <Text text="Total Rent:"/>
-                <Text text="{= 'INR ' + ${booking>/totalRent} }"/>
+                <Text text="{= ${booking>/curr_key} +' ' + ${booking>/totalRent} }"/>
                 </HBox>
 
                 <HBox justifyContent="SpaceBetween">
                     <Text text="Security Deposit:"/>
-                    <Text text="{= 'INR ' + ${/deposit} }"/>
+                    <Text text="{= ${booking>/curr_key}  + ' ' + ${booking>/totalDeposit} }"/>
                 </HBox>
 
                 <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
                     <Text text="Total Payable:"/>
-                    <ObjectStatus text="{= 'INR ' + ${booking>/total} }" state="Success"/>
+                    <ObjectStatus  text="{= ${booking>/curr_key} + ' ' + ${booking>/total} }" state="Success"/>
                 </HBox>
 
             </VBox>
@@ -90,7 +89,7 @@
 
             <!-- FOOTER -->
             <HBox justifyContent="End" class="sapUiMediumMarginTop">
-                <Button text="Back" class="sapUiTinyMarginEnd" press="onBack"/>
+                <Button text="Back" width="80px" class="sapUiTinyMarginEnd" press="onBack"/>
                 <Button text="Book Now"  id = "book" type="Emphasized" enabled="false" press="onBookNow"/>
             </HBox>
 

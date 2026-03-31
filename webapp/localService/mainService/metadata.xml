@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Validation.V1" Alias="Validation"/>
+    </edmx:Reference>
     <edmx:DataServices m:DataServiceVersion="2.0">
         <Schema Namespace="ZB18_G4_JRS_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
             <EntityType Name="User" sap:content-version="1">
@@ -15,12 +45,84 @@
                 <Property Name="Password" Type="Edm.String" Nullable="false" MaxLength="25" sap:unicode="false" sap:label="password" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Role" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Role" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
-            <EntityContainer Name="ZB18_G4_JRS_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+            <EntityType Name="ZIB18_G4_Admin_BookType" sap:label="Admin Booking View" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="BookingID"/>
+                    <PropertyRef Name="ItemID"/>
+                </Key>
+                <Property Name="BookingID" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Booking Id"/>
+                <Property Name="ItemID" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Item Id"/>
+                <Property Name="CustomerFullName" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Name"/>
+                <Property Name="ApproverFullName" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Name"/>
+                <Property Name="ItemDescription" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="Item Name"/>
+                <Property Name="RentalStartDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Rent Start Date"/>
+                <Property Name="RentalEndDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Rent End Date"/>
+                <Property Name="BookingCurrentStatus" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Booking Status"/>
+                <Property Name="PaymentCurrentStatus" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Payment Status"/>
+                <Property Name="BookingStatusDescription" Type="Edm.String" MaxLength="26"/>
+                <Property Name="PaymentStatusDescription" Type="Edm.String" MaxLength="9"/>
+                <Property Name="TotalRentalAmount" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="BookingCurrency" sap:label="Rent Amount"/>
+                <Property Name="TotalDepositAmount" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="BookingCurrency" sap:label="Deposit Amount"/>
+                <Property Name="BookingCurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency Key" sap:semantics="currency-code"/>
+                <Property Name="BookingCreationDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Booking Date"/>
+                <Property Name="PaymentSettlementDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Payment Date"/>
+            </EntityType>
+            <EntityType Name="ZIB18_G4_ITEMType" sap:label="Fetching Of Item Table" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="item_id"/>
+                </Key>
+                <Property Name="item_id" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Item Id"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="User Id"/>
+                <Property Name="item_name" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="Item Name"/>
+                <Property Name="category" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Category"/>
+                <Property Name="type" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Item Type"/>
+                <Property Name="total_qty" Type="Edm.Decimal" Precision="5" Scale="0" sap:unit="quant_unit" sap:label="Total Quantity"/>
+                <Property Name="available_qty" Type="Edm.Decimal" Precision="5" Scale="0" sap:unit="quant_unit" sap:label="Available Quantity"/>
+                <Property Name="quant_unit" Type="Edm.String" MaxLength="3" sap:label="Internal UoM" sap:quickinfo="Unit of Measurement" sap:semantics="unit-of-measure"/>
+                <Property Name="rent_per_day" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="curr_key" sap:label="Rent Amount"/>
+                <Property Name="deposit" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="curr_key" sap:label="Deposit Amount"/>
+                <Property Name="curr_key" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency Key" sap:semantics="currency-code"/>
+                <Property Name="image_url" Type="Edm.String" MaxLength="250" sap:label="Image Url"/>
+                <Property Name="item_lost" Type="Edm.Decimal" Precision="5" Scale="0" sap:unit="quant_unit" sap:label="Item Lost"/>
+                <Property Name="created_on" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Creation Date"/>
+                <Property Name="created_at" Type="Edm.Time" Precision="0" sap:label="Created Time"/>
+            </EntityType>
+            <EntityType Name="ZIB18_G4_USER_STATUSType" sap:label="User Booking Data" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="booking_id"/>
+                    <PropertyRef Name="item_id"/>
+                </Key>
+                <Property Name="booking_id" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Booking Id"/>
+                <Property Name="item_id" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Item Id"/>
+                <Property Name="customer_id" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="User Id"/>
+                <Property Name="booking_date" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Booking Date"/>
+                <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency Key" sap:semantics="currency-code"/>
+                <Property Name="booking_status" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Booking Status"/>
+                <Property Name="item_name" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="Item Name"/>
+                <Property Name="quantity" Type="Edm.Decimal" Precision="5" Scale="0" sap:unit="quant_unit" sap:label="Booking Item Quant" sap:quickinfo="Booking Item Quantity"/>
+                <Property Name="quant_unit" Type="Edm.String" MaxLength="3" sap:label="Internal UoM" sap:quickinfo="Unit of Measurement" sap:semantics="unit-of-measure"/>
+                <Property Name="total_rent_per_day" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="curr_key" sap:label="Rent Amount"/>
+                <Property Name="curr_key" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency Key" sap:semantics="currency-code"/>
+                <Property Name="rent_start_date" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Rent Start Date"/>
+                <Property Name="rent_end_date" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Rent End Date"/>
+                <Property Name="returned_unit" Type="Edm.String" MaxLength="3" sap:label="Internal UoM" sap:quickinfo="Unit of Measurement" sap:semantics="unit-of-measure"/>
+                <Property Name="returned_qty" Type="Edm.Decimal" Precision="5" Scale="0" sap:unit="quant_unit"/>
+                <Property Name="left_qty" Type="Edm.Decimal" Precision="34" Scale="6"/>
+                <Property Name="total_payable" Type="Edm.Decimal" Precision="17" Scale="3" sap:unit="curr_key"/>
+                <Property Name="total_booking_qty" Type="Edm.Decimal" Precision="5" Scale="0" sap:unit="quant_unit"/>
+            </EntityType>
+            <EntityContainer Name="ZB18_G4_JRS_SRV_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="UserSet" EntityType="ZB18_G4_JRS_SRV.User" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="ZIB18_G4_Admin_Book" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_Admin_BookType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZIB18_G4_ITEM" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_ITEMType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZIB18_G4_USER_STATUS" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_USER_STATUSType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
             </EntityContainer>
             <Annotation Term="Core.SchemaVersion" String="1.0.0" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
-            <atom:link rel="self" href="/sap/opu/odata/sap/ZB18_g4_JRS_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
-            <atom:link rel="latest-version" href="/sap/opu/odata/sap/ZB18_g4_JRS_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <Annotations Target="ZB18_G4_JRS_SRV.ZB18_G4_JRS_SRV_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+            </Annotations>
+            <atom:link rel="self" href="/sap/opu/odata/sap/ZB18_G4_JRS_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="/sap/opu/odata/sap/ZB18_G4_JRS_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
         </Schema>
     </edmx:DataServices>
 </edmx:Edmx>

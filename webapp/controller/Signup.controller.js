@@ -22,18 +22,22 @@ function (Controller) {
                 this.getView().setModel(oModel, "userModel");
             },
         onLogin : function(){
+                    debugger;
+                    const oLoginData = this.getOwnerComponent().getModel("loginData");
+                    if (oLoginData) {
+                        this.getView().setModel(oLoginData, "login");
+                    }
                     var oRoute = this.getOwnerComponent().getRouter();
                     oRoute.navTo("RouteLogin")
                 },
+
         validateFields: function (sPhone,sEmail) {
-            
-            var oEmail = sEmail;
-            var oPhone = sPhone;
 
             // --- Email validation --- Must contain '@' and end with .com or .in
-            var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in)$/i;
+            // var emailPattern = /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)?@[a-zA-Z0-9.-]+\.(com|in)$/i;
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(sEmail)) {
-                        sap.m.MessageToast.show("Please enter a valid email (example@domain.com or example@domain.in)");
+                        sap.m.MessageToast.show("Please enter a valid email (example@domain.com or example@domain.in or example.eg@domain.com)");
                         return false;
             }
 
@@ -47,9 +51,28 @@ function (Controller) {
 
                 return true; // All validations passed
         },
+//         validateFields: function (sPhone, sEmail) {
+    
+
+//     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+//     if (!emailPattern.test(sEmail)) {
+//         sap.m.MessageToast.show("Invalid email format");
+//         return false;
+//     }
+
+//     var phonePattern = /^[0-9]{10}$/;
+
+//     if (!phonePattern.test(sPhone)) {
+//         sap.m.MessageToast.show("Enter 10-digit phone number");
+//         return false;
+//     }
+
+//     return true;
+// },
 
         onSignup: function () {
-debugger
+
             var oView = this.getView();
 
             // Get data from JSON model instead of byId
@@ -73,7 +96,7 @@ debugger
                 sap.m.MessageToast.show("Passwords do not match");
                 return;
             }
-            debugger
+           
             if (!this.validateFields(sPhone,sEmail)) {
                   return // Stop signup if validation fails
                 }
@@ -95,10 +118,47 @@ debugger
             // Create call
             oModel.create("/UserSet", oPayload, {
                     success: function (data) {
-                        sap.m.MessageToast.show("Signup successful");
-                    },
-                    error: function (oerror) {
-                        sap.m.MessageToast.show("Already Entered Email");
+                        const oComponent = this.getOwnerComponent();
+
+                        // // Save login credentials (for auto login)
+                        // const oLoginData = new sap.ui.model.json.JSONModel({
+                        // email: oPayload.Email,
+                        // password: oPayload.Password
+                        // });
+
+                        // oComponent.setModel(oLoginData, "loginData");
+
+                        //Clear signup form
+                        this.getView().getModel("userModel").setProperty("/user", {
+                        Name: "",
+                        Phone: "",
+                        Email: "",
+                        Address: "",
+                        Password: "",
+                        ConfirmPassword: "",
+                        Role: "USER"
+                        });
+
+                        //Navigate to login
+                        oComponent.getRouter().navTo("RouteLogin");
+                        
+                    }.bind(this),
+
+                    error: function (oError) {
+                        // sap.m.MessageToast.show("Already Entered Email");
+                        var sMessage = "An error occurred.";
+ 
+                    try {
+                        // Parse backend error message
+                        var oResponse = JSON.parse(oError.responseText);
+                        // This is our ABAP ev_msg value
+                        sMessage = oResponse.error.message.value;
+                    } catch (e) {
+                        sMessage = oError.message || sMessage;
+                    }
+ 
+                    // Show error in big popup
+                    sap.m.MessageBox.error(sMessage);
                     }
 
             });

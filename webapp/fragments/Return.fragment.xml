@@ -1,101 +1,110 @@
 
 <core:FragmentDefinition
-    controllerName="my.app.controller.ReturnSplit"
+    controllerName="com.applexus.finalproject.fragments.Return"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:f="sap.ui.layout.form"
     xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core">
 
-    <SplitApp id="idSplitApp">
-        <masterPages>
-            <Page title="Returns">
-                <subHeader>
-                    <OverflowToolbar>
-                        <SearchField placeholder="Search customer..." width="100%" />
-                    </OverflowToolbar>
-                </subHeader>
-                <List id="idMasterList">
-                    <CustomListItem type="Active" class="sapUiSmallMargin">
-                        <HBox justifyContent="SpaceBetween">
-                            <VBox>
-                                <Text text="BK-9925" fontBold="true" color="Highlight" />
-                                <Title text="Vijayalakshmi" level="H4" />
-                                <Text text="Items: 2 • Due: Mar 30" fontItalic="true" />
-                            </VBox>
-                            <ObjectStatus text="Active" state="Success" />
-                        </HBox>
-                    </CustomListItem>
-                </List>
-            </Page>
-        </masterPages>
+    <Page title="Return Details">
 
-        <detailPages>
-            <Page title="Return Details">
-                <content>
-                    <VBox class="sapUiMediumMargin">
-                        <Title text="Return Details" titleStyle="H2" />
-                        <Text text="Reviewing items for Booking BK-9925" color="Primary" class="sapUiSmallMarginBottom" />
+    <content>
+        <VBox class="sapUiSmallMarginBegin sapUiMarginTop">
+        <!-- SEARCH -->
+        <SearchField 
+            placeholder="Search customer..." 
+            width="30%" 
+            class="sapUiSmallMarginTop sapUiSmallMarginBottom"/>
 
-                        <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="12">
-                            <f:content>
-                                <l:VerticalLayout>
-                                    <Label text="Customer ID" />
-                                    <Input value="CUST-7742" editable="false" />
-                                </l:VerticalLayout>
-                                <l:VerticalLayout>
-                                    <Label text="Customer Name" />
-                                    <Input value="Vijayalakshmi" editable="false" />
-                                </l:VerticalLayout>
-                                <l:VerticalLayout>
-                                    <Label text="Actual Return Date" />
-                                    <DatePicker placeholder="dd-mm-yyyy" />
-                                </l:VerticalLayout>
-                            </f:content>
-                        </f:SimpleForm>
+        <!-- HEADER DETAILS -->
+        <HBox class="sapUiSmallMarginBottom " justifyContent="Start">
 
-                        <Table items="{/ReturnItems}" class="sapUiMediumMarginTop borderTable">
-                            <headerToolbar>
-                                <OverflowToolbar>
-                                    <Title text="Return Items Verification" level="H4" />
-                                </OverflowToolbar>
-                            </headerToolbar>
-                            <columns>
-                                <Column><Text text="Item Description" /></Column>
-                                <Column hAlign="Center"><Text text="Qty" /></Column>
-                                <Column><Text text="Return Status" /></Column>
-                                <Column><Text text="Condition" /></Column>
-                            </columns>
+        <VBox class="sapUiSmallMarginEnd">
+              <Label text="Customer ID"/>
+             <Input value="{/customerId}" editable="false"/>
+    </VBox>
+
+    <VBox>
+        <Label text="Customer Name"/>
+        <Input value="{/customerName}" editable="false"/>
+    </VBox>
+
+      </HBox>
+      </VBox>
+
+        <!-- TABLE -->
+        <Table items="{/items}" class="sapUiSmallMarginTop">
+
+            <columns>
+                <Column><Text text="Item Description"/></Column>
+                <Column><Text text="Total Qty"/></Column>
+                <Column><Text text="Return Status"/></Column>
+                <Column><Text text="Condition"/></Column>
+                <Column><Text text="Return Date"/></Column>
+                <Column><Text text="Returned Qty"/></Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+
+                    <cells>
+
+                        <!-- Description -->
+                        <VBox>
+                            <Text text="{name}"/>
+                            <Text text="{type}" class="sapUiTinyMarginTop"/>
+                        </VBox>
+
+                        <!-- Qty -->
+                        <Text text="{qty}"/>
+
+                        <!-- Return Status -->
+                        <Select 
+                            selectedKey="{status}" 
+                            change="onStatusChange">
+
                             <items>
-                                <ColumnListItem>
-                                    <cells>
-                                        <VBox>
-                                            <Text text="{Description}" fontBold="true" />
-                                            <Text text="{SubText}" class="sapUiTinyMarginTop" />
-                                        </VBox>
-                                        <Text text="{Qty}" color="Highlight" />
-                                        <Select selectedKey="{Status}" width="100%">
-                                            <core:Item key="Returned" text="Returned" />
-                                            <core:Item key="Missing" text="Missing" />
-                                            <core:Item key="Partial" text="Partial" />
-                                        </Select>
-                                        <Select selectedKey="{Condition}" width="100%">
-                                            <core:Item key="Good" text="Good" />
-                                            <core:Item key="Damaged" text="Damaged" />
-                                        </Select>
-                                    </cells>
-                                </ColumnListItem>
+                                <core:Item key="RETURNED" text="Returned"/>
+                                <core:Item key="MISSING" text="Missing"/>
+                                <core:Item key="PARTIAL" text="Partial"/>
                             </items>
-                        </Table>
 
-                        <HBox justifyContent="End" class="sapUiMediumMarginTop">
-                            <Button text="Complete Return" type="Emphasized" press="onCompleteReturn" />
-                        </HBox>
-                    </VBox>
-                </content>
+                        </Select>
+
+                        <!-- Condition -->
+                        <Select 
+                            selectedKey="{condition}"
+                            enabled="{= ${status} !== 'MISSING'}">
+
+                            <items>
+                                <core:Item key="GOOD" text="Good"/>
+                                <core:Item key="DAMAGED" text="Damaged"/>
+                              
+                            </items>
+
+                        </Select>
+
+                        <!-- Return Date -->
+                        <DatePicker value="{itemReturnDate}" displayFormat="dd-MM-yyyy"/>
+
+                        <!-- Returned Qty -->
+                        <Input value="{returnedQty}" type="Number" width="80px"/>
+
+                    </cells>
+
+                </ColumnListItem>
+            </items>
+
+        </Table>
+
+        <!-- BUTTON -->
+        <HBox justifyContent="End" class="sapUiSmallMarginTop sapUiLargeMarginEnd">
+            <Button text="save" type="Emphasized" press="onComplete"  width="90px"/>
+        </HBox>
+
+    </content>
             </Page>
-        </detailPages>
-    </SplitApp>
 </core:FragmentDefinition>
 
 

@@ -4,6 +4,12 @@
 
      <Page id="page" title="Jewellery Rental">
 
+            <headerContent>
+                <Button 
+                    text="Logout" 
+                    icon="sap-icon://log"
+                    press="onLogoutPress"/>
+            </headerContent>
         <content>
             <VBox class="sapUiSmallMargin">
             
@@ -28,9 +34,9 @@
 </HBox>
 
                 <!-- List -->
-                <List id="itemList" items="{/ZIB18_G4_ITEM}" >
+                <List id="itemList" items="{/ZIB18_G4_ITEM}"  >
 
-                    <CustomListItem>
+                    <CustomListItem >
                         <HBox justifyContent="SpaceBetween" alignItems="Center"
                          class="sapUiSmallMarginBeginEnd">
 
@@ -49,7 +55,8 @@
 
                             <!-- Right Side -->
                             <VBox alignItems="End">
-                                <Text text="{rent_per_day} / day"/>
+                                <Text text="Rent : {rent_per_day} / day"/>
+                                <Text text="Deposit : {deposit}  /qty "/>
                                 <Text text="{curr_key}" class="sapUiTinyMarginBottom"/>
 
                                 <ObjectStatus 

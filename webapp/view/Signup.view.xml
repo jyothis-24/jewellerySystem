@@ -57,6 +57,7 @@
                                         class="sapUiSmallMarginTop"/>
                                 <Input  id="emailId"
                                         type="Email"
+                                        liveChange="validateFields"
                                         placeholder="e.g. name@example.com" 
                                         value = "{userModel>/user/Email}" />
 
@@ -75,7 +76,6 @@
                                 <Input  id="pid1"
                                         type="Password" 
                                         placeholder="Enter password"
-                                        liveChange="validateFields"
                                         value = "{userModel>/user/Password}" />
 
                                 

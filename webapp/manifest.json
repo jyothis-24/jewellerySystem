@@ -20,15 +20,24 @@
         "uri": "/sap/opu/odata/sap/ZB18_G4_JRS_SRV/",
         "type": "OData",
         "settings": {
-          "annotations": [],
+          "annotations": [
+            "ZB18_G4_JRS_ANNO_MDL"
+          ],
           "localUri": "localService/mainService/metadata.xml",
           "odataVersion": "2.0"
+        }
+      },
+      "ZB18_G4_JRS_ANNO_MDL": {
+        "uri": "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZB18_G4_JRS_ANNO_MDL',Version='0001')/$value/",
+        "type": "ODataAnnotation",
+        "settings": {
+          "localUri": "localService/mainService/ZB18_G4_JRS_ANNO_MDL.xml"
         }
       }
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
+    "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.108.50",
       "libs": {
