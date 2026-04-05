@@ -1,114 +1,169 @@
 
 <core:FragmentDefinition
     controllerName="com.applexus.finalproject.fragments.Return"
-    xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form"
-    xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core">
 
-    <Page title="Return Details">
+<SplitApp id="splitApp">
 
-    <content>
-        <VBox class="sapUiSmallMarginBegin sapUiMarginTop">
-        <!-- SEARCH -->
-        <SearchField 
-            placeholder="Search customer..." 
-            width="30%" 
-            class="sapUiSmallMarginTop sapUiSmallMarginBottom"/>
+    <!-- ================= MASTER ================= -->
+    <masterPages>
+        <Page title="Bookings">
 
-        <!-- HEADER DETAILS -->
-        <HBox class="sapUiSmallMarginBottom " justifyContent="Start">
+            <content>
 
-        <VBox class="sapUiSmallMarginEnd">
-              <Label text="Customer ID"/>
-             <Input value="{/customerId}" editable="false"/>
-    </VBox>
+                <SearchField 
+                    placeholder="Search customer..." 
+                    width="70%"
+                    liveChange="onMasterSearch"
+                    class="sapUiSmallMargin"/>
 
-    <VBox>
-        <Label text="Customer Name"/>
-        <Input value="{/customerName}" editable="false"/>
-    </VBox>
+                <List 
+                    id="bookingList"
+                    items="{/Zib18_g4_return_master}"
+                    mode="SingleSelectMaster"
+                    selectionChange="onSelectBooking">
 
-      </HBox>
-      </VBox>
+                    <items>
+                        <StandardListItem
+                            title="{BookingID}"
+                            description="{CustomerName}"
+                            info="{Status}"
+                            infoState="Success"/>
+                    </items>
 
-        <!-- TABLE -->
-        <Table items="{/items}" class="sapUiSmallMarginTop">
+                </List>
 
-            <columns>
-                <Column><Text text="Item Description"/></Column>
-                <Column><Text text="Total Qty"/></Column>
-                <Column><Text text="Return Status"/></Column>
-                <Column><Text text="Condition"/></Column>
-                <Column><Text text="Return Date"/></Column>
-                <Column><Text text="Returned Qty"/></Column>
-            </columns>
+            </content>
 
-            <items>
-                <ColumnListItem>
+        </Page>
+    </masterPages>
 
-                    <cells>
 
-                        <!-- Description -->
-                        <VBox>
-                            <Text text="{name}"/>
-                            <Text text="{type}" class="sapUiTinyMarginTop"/>
+    <!-- ================= DETAIL ================= -->
+    <detailPages>
+        <Page id="detailPage" title="Return Details">
+
+            <content>
+
+                <VBox class="sapUiSmallMargin">
+
+                    <!-- HEADER -->
+                    <HBox class="sapUiSmallMarginBottom">
+
+                        <VBox class="sapUiSmallMarginEnd">
+                            <Label text="Customer ID"/>
+                            <Input value="{CustomerID}" editable="false"/>
                         </VBox>
 
-                        <!-- Qty -->
-                        <Text text="{qty}"/>
+                        <VBox>
+                            <Label text="Customer Name"/>
+                            <Input value="{CustomerName}" editable="false"/>
+                        </VBox>
 
-                        <!-- Return Status -->
-                        <Select 
-                            selectedKey="{status}" 
-                            change="onStatusChange">
+                    </HBox>
 
-                            <items>
-                                <core:Item key="RETURNED" text="Returned"/>
-                                <core:Item key="MISSING" text="Missing"/>
-                                <core:Item key="PARTIAL" text="Partial"/>
-                            </items>
+                    <!-- TABLE -->
+                    <Table id="returnTable" items="{itemsModel>/}">
 
-                        </Select>
+                        <columns>
+                            <Column><Text text="Item"/></Column>
+                            <Column><Text text="Total Qty"/></Column>
+                            <Column><Text text="Status"/></Column>
+                            <Column><Text text="Condition"/></Column>
+                            <Column><Text text="Return Date"/></Column>
+                            <Column><Text text="Returned Qty"/></Column>
+                            <Column><Text text="Fine"/></Column>
+                            <Column><Text text="Action"/></Column>
+                        </columns>
 
-                        <!-- Condition -->
-                        <Select 
-                            selectedKey="{condition}"
-                            enabled="{= ${status} !== 'MISSING'}">
+                        <items>
+                            <ColumnListItem>
 
-                            <items>
-                                <core:Item key="GOOD" text="Good"/>
-                                <core:Item key="DAMAGED" text="Damaged"/>
-                              
-                            </items>
+                                <cells>
 
-                        </Select>
+                                    <!-- Item -->
+                                    <VBox>
+                                        <Text text="{itemsModel>ItemName}"/>
+                                        <Text text="{itemsModel>ItemType}" class="sapUiTinyMarginTop"/>
+                                    </VBox>
 
-                        <!-- Return Date -->
-                        <DatePicker value="{itemReturnDate}" displayFormat="dd-MM-yyyy"/>
+                                    <!-- Total Qty -->
+                                    <Text text="{itemsModel>Quantity}"/>
 
-                        <!-- Returned Qty -->
-                        <Input value="{returnedQty}" type="Number" width="80px"/>
+                                    <!-- Status -->
+                                    <Select 
+                                        selectedKey="{itemsModel>Status}" 
+                                        change="onStatusChange"
+                                        >
 
-                    </cells>
+                                        <items>
+                                            <core:Item key="R" text="Returned"/>
+                                            <core:Item key="L" text="Lost"/>
+                                            <core:Item key="P" text="Partially Returned"/>
+                                        </items>
 
-                </ColumnListItem>
-            </items>
+                                    </Select>
 
-        </Table>
+                                    <!-- Condition -->
+                                <Select selectedKey="{itemsModel>Conditions}" 
+                                        enabled="{= ${itemsModel>Status} !== 'L' }">
+                                    <items>
+                                        <core:Item key="G" text="Good"/>
+                                        <core:Item key="B" text="Damaged"/>
+                                    </items>
+                                </Select>
 
-        <!-- BUTTON -->
-        <HBox justifyContent="End" class="sapUiSmallMarginTop sapUiLargeMarginEnd">
-            <Button text="save" type="Emphasized" press="onComplete"  width="90px"/>
-        </HBox>
+                                    <!-- Date -->
+                                    <DatePicker 
+                                        value="{itemsModel>ReturnDate}" 
+                                        valueFormat="yyyy-MM-dd"
+                                        displayFormat="dd-MM-yyyy"
+                                        editable="{= ${itemsModel>Status} !== 'L' }"/>
 
-    </content>
-            </Page>
+                                    <!-- Returned Qty -->
+                                    <Input 
+                                        value="{itemsModel>ReturnedQty}" 
+                                        type="Number" 
+                                        width="80px"
+                                        />
+
+                                    <!-- Fine -->
+                                    <Text text="{itemsModel>CalculatedFine}"/>
+                                    <Button 
+                                            text="Save" 
+                                            type="Emphasized"
+                                            press="onRowSave"
+                                           />
+                                </cells>
+
+                            </ColumnListItem>
+                        </items>
+
+                    </Table>
+
+                    <!-- 
+                    <HBox justifyContent="End" class="sapUiMediumMarginTop">
+                        <Button text="Save" type="Emphasized" press="onSave"/>
+                    </HBox> -->
+
+                </VBox>
+                <VBox visible="{= ${itemsModel>/allReturned} === true }">
+
+                    <Text text="Total Fine: {itemsModel>/totalFine}" />
+                    <Text text="Refund Amount: {itemsModel>/refund}" />
+
+                </VBox>
+
+            </content>
+
+        </Page>
+    </detailPages>
+
+</SplitApp>
+
 </core:FragmentDefinition>
 
-
- 
 <!-- <core:FragmentDefinition
     controllerName="com.applexus.finalproject.controller.Admin"
     xmlns:mvc="sap.ui.core.mvc"   

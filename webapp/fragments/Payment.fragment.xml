@@ -13,53 +13,72 @@
                 <SearchField
                     width="200px"
                     placeholder="Search Customer..."
+                    class="sapUiSmallMarginEnd"
                     liveChange="onSearchPay"/>
                     
-                <Button text="Filter" press="onFilterPress"/>
+                <!--  FILTER BUTTON WITH DROPDOWN -->
+                <MenuButton
+                    id="filterButton1"
+                    text="Filter"
+                    icon="sap-icon://filter">
+
+                    <menu>
+                        <Menu itemSelected="onFilterSelect">
+                            <MenuItem text="All" key="ALL"/>
+                            <MenuItem text="Pending" key="P"/>
+                            <MenuItem text="Confirmed" key="C"/>
+                        </Menu>
+                    </menu>
+
+    </MenuButton>
+             
             </HBox>
         </HBox>
 
-        <!-- Table -->
-        <Table items="{oJson>/bookings}" class="sapUiMediumMarginTop">
+       <Table id="idPaymentTable" items="{/ZIB18_G4_Payment}" class="sapUiMediumMarginTop">
 
-            <columns>
-                <Column><Text text="Booking ID"/></Column>
-                <Column><Text text="Customer"/></Column>
-                <Column><Text text="Rent Amount"/></Column>
-                <Column><Text text="Pay Date"/></Column>
-                <Column><Text text="Deposit"/></Column>
-                <Column><Text text="Total Paid"/></Column>
-                <Column><Text text="Status"/></Column>
-            </columns>
+    <columns>
+        <Column><Text text="Booking ID"/></Column>
+        <Column><Text text="Customer"/></Column>
+        <Column><Text text="Rent Amount"/></Column>
+        <Column><Text text="Pay Date"/></Column>
+        <Column><Text text="Deposit"/></Column>
+        <Column><Text text="Status"/></Column>
+    </columns>
 
-            <items>
-                <ColumnListItem>
-                    <cells>
+    <items>
+        <ColumnListItem>
+            <cells>
 
-                        <ObjectIdentifier title="{oJson>bookingId}"/>
+                <!-- Booking ID -->
+                <ObjectIdentifier title="{BookingID}"/>
 
-                        <Text text="{oJson>customerName}"/>
+                <!-- Customer -->
+                <Text text="{CustomerName}"/>
 
-                        <Text text="₹ {oJson>rentAmount}"/>
+                <!-- Rent -->
+                <Text text="₹ {TotalRentalAmount}"/>
 
-                        <Text text="{oJson>payDate}"/>
+                <!-- Payment Date -->
+                <Text text="{
+                            path:'PaymentProcessedDate',
+                            type: 'sap.ui.model.type.Date',
+                            formatOptions: { pattern: 'dd-MM-yyyy' }
+                        }"/>
 
-                        <Text text="₹ {oJson>deposit}"/>
+                <!-- Deposit -->
+                <Text text="₹ {TotalDepositAmount}"/>
 
-                        <Text text="₹ {oJson>totalPaid}"/>
+                <!-- Status -->
+                <ObjectStatus
+                    text="{PaymentStatusDescription}"
+                    state="{= ${PaymentCurrentStatus} === 'C' ? 'Success' :${PaymentCurrentStatus} === 'P' ? 'Warning' :'None' }"/>
 
-                        <ObjectStatus
-                            text="{oJson>paymentStatus}"
-                            state="{
-                                = ${oJson>paymentStatus} === 'Completed' ? 'Success' :
-                                  ${oJson>paymentStatus} === 'Pending' ? 'Warning' : 'None'
-                            }"/>
+            </cells>
+        </ColumnListItem>
+    </items>
 
-                    </cells>
-                </ColumnListItem>
-            </items>
-
-        </Table>
+</Table>
 
     </VBox>
 

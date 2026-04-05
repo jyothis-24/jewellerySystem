@@ -20,13 +20,20 @@
 
 
     <!-- Title -->
-    <Title text="Booking Confirmed!" class="sapUiSmallMarginBottom"/>
+        <Text
+            text="{= 'Your Booking ID: ' + ${viewModel>/bookingId}}"
+            class="sapUiSmallMarginBottom"
+            textAlign="Center"
+            wrapping="true"
+            design="Bold"
+            color="Good"/>
 
-    <!-- Description -->
-    <Text 
-        text="Your request has been submitted. Please keep track of admin approval in your dashboard status."
-        textAlign="Center"
-        class="sapUiSmallMarginBottom"/>
+        <!-- Description -->
+        <Text 
+            text="Your request has been submitted successfully. Please keep track of admin approval in your dashboard status."
+            textAlign="Center"
+            class="sapUiSmallMarginBottom"
+            wrapping="true"/>
 
     <!-- Button -->
     <Button 

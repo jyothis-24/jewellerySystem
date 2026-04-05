@@ -120,14 +120,6 @@ function (Controller) {
                     success: function (data) {
                         const oComponent = this.getOwnerComponent();
 
-                        // // Save login credentials (for auto login)
-                        // const oLoginData = new sap.ui.model.json.JSONModel({
-                        // email: oPayload.Email,
-                        // password: oPayload.Password
-                        // });
-
-                        // oComponent.setModel(oLoginData, "loginData");
-
                         //Clear signup form
                         this.getView().getModel("userModel").setProperty("/user", {
                         Name: "",
@@ -157,7 +149,7 @@ function (Controller) {
                         sMessage = oError.message || sMessage;
                     }
  
-                    // Show error in big popup
+                    // Show error in  popup
                     sap.m.MessageBox.error(sMessage);
                     }
 

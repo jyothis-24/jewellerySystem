@@ -10,9 +10,32 @@ sap.ui.define([
     return Controller.extend("com.applexus.finalproject.controller.User", {
 
       onInit: function () {
-
+                var oRouter = this.getOwnerComponent().getRouter();
+                oRouter.getRoute("RouteUser").attachPatternMatched(this._onRouteMatched, this);
         },
-        
+        _onRouteMatched: function () {
+    //  Refresh OData
+    var oModel = this.getView().getModel();
+    if (oModel) {
+        oModel.refresh(true);
+    }
+
+    //  Refresh list binding
+    var oList = this.byId("itemList");
+    if (oList) {
+        oList.getBinding("items").refresh();
+    }
+
+    //  Reset checkboxes (IMPORTANT)
+    oList.getItems().forEach(function (oItem) {
+        var oCheckBox = oItem.getContent()[0]
+            .getItems()[0]
+            .getItems()[0]
+            .getItems()[0];
+
+        oCheckBox.setSelected(false);
+    });
+},
 
         onSearch: function (oEvent) {
            
@@ -35,8 +58,8 @@ sap.ui.define([
             oBinding.filter([oMaster]);
         },
 
-            onPreview: function (oEvent) {
-                    debugger
+        onPreview: function (oEvent) {
+                    
                     var oContext = oEvent.getSource().getBindingContext();
                     this.loadFragment({
                             name: "com.applexus.finalproject.fragments.Popup",
@@ -83,37 +106,36 @@ sap.ui.define([
 
             aItems.forEach(function (oItem) {
 
-                //  Safely get CheckBox
+                // Safely get CheckBox
                 const oHBox = oItem.getContent()[0];
                 const oVBox = oHBox.getItems()[0];
                 const oInnerHBox = oVBox.getItems()[0];
-                const oCheckBox = oInnerHBox.getItems()[0];
+                 const oCheckBox = oInnerHBox.getItems()[0];
+
 
                 if (oCheckBox.getSelected()) {
                     debugger;
                     const oCtx = oItem.getBindingContext();
                     const oData = oCtx.getObject();
 
+                    const startDate = new Date();
+                    const endDate = new Date(startDate); // Copy start date to modify it
+                    endDate.setDate(startDate.getDate() + 1); // Add 1 day to the current date
+
                     aSelected.push({
                         id: oData.item_id,
                         name: oData.item_name,
                         type: oData.type,
                         price: oData.rent_per_day,
-                        deposit:oData.deposit,
-                        curr_key: oData.curr_key, 
+                        deposit: oData.deposit,
+                        curr_key: oData.curr_key,
                         qty: 1,
-                        availableQty: oData.available_qty - oData.item_lost, 
-                        startDate: new Date().toISOString().split("T")[0],
-                        endDate: new Date().toISOString().split("T")[0],
-                        // endDate: (function() {
-                        //         var d = new Date();
-                        //         d.setDate(d.getDate() + 1); // add 1 day
-                        //         return d.toISOString().split("T")[0];
-                        //     })()
+                        availableQty: oData.available_qty - oData.item_lost,
+                        startDate: startDate.toISOString().split("T")[0], // Format as yyyy-mm-dd
+                        endDate: endDate.toISOString().split("T")[0] // Format as yyyy-mm-dd
                     });
                 }
-            });
-
+            });                                                                                                                                                                                                                                                                                                                        
             if (aSelected.length === 0) {
                 sap.m.MessageToast.show("Select at least one item");
                 return;
@@ -132,10 +154,19 @@ sap.ui.define([
             this.getOwnerComponent().setModel(oModel, "booking");
             this.getOwnerComponent().getRouter().navTo("RouteUserbook");
         },
-        onLogoutPress:function(){
+        onLogoutPress: function () {
                 var oRouter = this.getOwnerComponent().getRouter();
-                oRouter.navTo("RouteLogin")
-        }
+                    // Clear the session variable (currentUserCustomerId) on logout
+                sessionStorage.removeItem("currentUserCustomerId");
+                // Navigate to login
+                oRouter.navTo("RouteLogin");
+
+                //  Clear browser history so back button cannot return to this page
+                window.history.pushState(null, "", window.location.href);
+                window.onpopstate = function () {
+                    window.history.pushState(null, "", window.location.href);
+                };
+       }
 
     });
 });

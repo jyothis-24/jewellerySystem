@@ -25,6 +25,10 @@
         <edmx:Include Namespace="ZB18_G4_JRS_SRV" Alias="SAP"/>
     </edmx:Reference>
     <edmx:DataServices>
-        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
+        <Schema Namespace="zb18_g4_jrs_anno_mdl.v1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotations Target="ZB18_G4_JRS_SRV.ZIB18_G4_USER_STATUSType/p_user_id">
+                <Annotation Term="UI.Hidden"/>
+            </Annotations>
+        </Schema>
     </edmx:DataServices>
 </edmx:Edmx>

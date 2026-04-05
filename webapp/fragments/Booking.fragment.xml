@@ -2,17 +2,22 @@
     xmlns:core="sap.ui.core"
     xmlns:l="sap.ui.layout">
 
-    <VBox >
+    <VBox>
 
+        <Toolbar>
 
-        <Toolbar >
+         <Button 
+            icon="sap-icon://sort"
+            tooltip="Sort by Booking ID"
+            press="onSortBooking"
+            class="sapUiSmallMarginEnd"/>
+
             <Title text="Booking Management" level="H2" />
             <ToolbarSpacer />
-            
 
             <SearchField
-                width="250px"
-                placeholder="Search..."
+                width="150px"
+                placeholder="Search Id or Booking"
                 liveChange="onSearch"/>
 
             <Select change="onFilterChange">
@@ -25,13 +30,14 @@
             </Select>
         </Toolbar>
 
-        
-        <Table items="{/ZIB18_G4_Admin_Book}" class="sapUiSmallMarginTop">
+        <Table id="bookingTable" items="{grouped>/}" class="sapUiSmallMarginTop"
+        growing="true" growingThreshold="8" growingScrollToLoad="false">
 
             <columns>
                 <Column><Text text="BOOKING ID"/></Column>
                 <Column><Text text="CUSTOMER NAME"/></Column>
                 <Column><Text text="ITEMS SELECTED"/></Column>
+                <Column hAlign="Center"><Text text="BOOKED QUANTITY"/></Column>
                 <Column><Text text="DATES"/></Column>
                 <Column><Text text="STATUS"/></Column>
                 <Column><Text text="PAYMENT STATUS"/></Column>
@@ -40,56 +46,59 @@
 
             <items>
                 <ColumnListItem>
-
                     <cells>
 
-                        
-                        <Link text="{BookingID}"/>
+                        <Text text="{grouped>BookingID}"/>
+                        <Text text="{grouped>CustomerFullName}"/>
 
-                        
-                        <Text text="{CustomerFullName}"/>
+                        <!-- ITEMS -->
+                        <VBox>
+                            <List items="{grouped>Items}">
+                                <items>
+                                    <CustomListItem>
+                                        <HBox>
+                                            <Text text="{grouped>ItemDescription}"/>
+                                            <!-- <Text text=" (Qty: {grouped>Quantity})"/> -->
+                                        </HBox>
+                                    </CustomListItem>
+                                </items>
+                            </List>
+                        </VBox>
 
-                        
-                       <VBox>
-                <List items="{items}">
-                    <items>
-                        <CustomListItem>
-                            <HBox>
-                                <Text text="{ItemDescription}" />
-                                <Text text=" - " />
-                                <Text text="{oJson>quantity}" />
-                            </HBox>
-                        </CustomListItem>
-                    </items>
-                </List>
-    </VBox>
+                        <!--  NEW CELL -->
+                        <Text text="{
+                            path: 'grouped>Items',
+                            formatter: '.formatTotalQty'
+                        }"/>
 
                         <!-- Dates -->
-                       <VBox>
+                        <VBox>
                             <Text text="{
-                                path: 'RentalStartDate',
+                                path: 'grouped>RentalStartDate',
                                 type: 'sap.ui.model.type.Date',
                                 formatOptions: { pattern: 'dd-MM-yyyy' }
                             }"/>
 
                             <Text text="{
-                                path: 'RentalEndDate',
+                                path: 'grouped>RentalEndDate',
                                 type: 'sap.ui.model.type.Date',
                                 formatOptions: { pattern: 'dd-MM-yyyy' }
                             }"/>
                         </VBox>
 
                         <!-- STATUS -->
-                       <ObjectStatus
-                                text="{BookingStatusDescription}"
-                                state="{= ${BookingCurrentStatus} === 'A' ? 'Success' : ${BookingCurrentStatus} === 'P' ? 'Warning' : ${BookingCurrentStatus} === 'C' ? 'Error' :${BookingCurrentStatus} === 'B' ? 'Information' : 'None' }"/>
+                        <ObjectStatus
+                            text="{grouped>BookingStatusDescription}"
+                            state="{= ${grouped>BookingCurrentStatus} === 'A' ? 'Success' :
+                                      ${grouped>BookingCurrentStatus} === 'P' ? 'Warning' :
+                                      ${grouped>BookingCurrentStatus} === 'R' ? 'Error' :
+                                      ${grouped>BookingCurrentStatus} === 'B' ? 'Information' : 'None' }"/>
 
                         <!-- PAYMENT STATUS -->
-                      <ObjectStatus
-                                text="{PaymentStatusDescription}"
-                                state="{= ${PaymentCurrentStatus} === 'C' ? 'Success' : ${PaymentCurrentStatus} === 'P' ? 'Warning' : 'None' }"/>
-                                                            
-                         
+                        <ObjectStatus
+                            text="{grouped>PaymentStatusDescription}"
+                            state="{= ${grouped>PaymentCurrentStatus} === 'C' ? 'Success' :
+                                      ${grouped>PaymentCurrentStatus} === 'P' ? 'Warning' : 'None' }"/>
 
                         <!-- ACTION BUTTONS -->
                         <HBox>
@@ -97,20 +106,20 @@
                                 text="Approve"
                                 type="Emphasized"
                                 press="onApprovePress"
-                                enabled="{= ${BookingStatusDescription} === 'Pending' }"
-                                 class = "sapUiSmallMarginEnd"/>
+                                enabled="{= ${grouped>BookingCurrentStatus} === 'P' }"
+                                class="sapUiSmallMarginEnd"/>
 
                             <Button
                                 text="Reject"
                                 type="Reject"
-                                press="onRejectPress"
-                                enabled="{= ${PaymentStatusDescription} === 'Pending' }"/>
+                                enabled="{= ${grouped>BookingCurrentStatus} === 'P' }"
+                                press="onRejectPress"/>
                         </HBox>
 
                     </cells>
-
                 </ColumnListItem>
             </items>
+            
 
         </Table>
 

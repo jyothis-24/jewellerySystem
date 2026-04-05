@@ -1,0 +1,25 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:device="sap/ui/Device">
+  <Dialog
+    id="approveDialog"
+    title="Approve Items"
+    draggable="true"
+    resizable="true"
+    stretch="{= ${device.system.phone} }"
+    afterClose="onApproveDialogClose">
+
+    <VBox
+      id="itemsVBox"
+      width="100%"
+      renderType="Bare">
+
+      <!-- Items will be added dynamically -->
+
+    </VBox>
+
+    <buttons>
+      <Button text="Approve Selected" press="onApproveConfirm" />
+      <Button text="Cancel" press="onApproveCancel" />
+    </buttons>
+
+  </Dialog>
+</core:FragmentDefinition>

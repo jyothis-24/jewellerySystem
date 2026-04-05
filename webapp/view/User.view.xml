@@ -1,3 +1,4 @@
+
 <mvc:View controllerName="com.applexus.finalproject.controller.User"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m">
@@ -20,7 +21,7 @@
     <!-- Left: Search -->
     <SearchField 
         placeholder="Search items..." 
-        width="800px"
+        width="400px"
         liveChange="onSearch"/>
 
     <!-- Right: Status Button -->
@@ -34,7 +35,11 @@
 </HBox>
 
                 <!-- List -->
-                <List id="itemList" items="{/ZIB18_G4_ITEM}"  >
+                <List id="itemList" 
+                    items="{/ZIB18_G4_ITEM}"     
+                    growing="true"
+                    growingThreshold="8"
+                    growingScrollToLoad="true" >
 
                     <CustomListItem >
                         <HBox justifyContent="SpaceBetween" alignItems="Center"
@@ -71,18 +76,19 @@
 
                 </List>
 
-                <!-- Next Button -->
-               
-            <HBox justifyContent="End" class="sapUiMediumMarginTop">
-                 <Button 
-                    text="Next" 
-                    type="Emphasized" 
-                    width="60px"
-                    press="onNext"/>
-            </HBox>
-
             </VBox>
+
         </content>
+        <footer>
+        <Toolbar>
+            <ToolbarSpacer/>
+            <Button 
+                text="Next" 
+                type="Emphasized"
+                press="onNext"/>
+        </Toolbar>
+    </footer>
 
     </Page>
 </mvc:View>
+

@@ -45,6 +45,51 @@
                 <Property Name="Password" Type="Edm.String" Nullable="false" MaxLength="25" sap:unicode="false" sap:label="password" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Role" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Role" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="BK_Header" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="BookingId"/>
+                </Key>
+                <Property Name="BookingId" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Booking Id" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CustomerId" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="User Id" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ApproverId" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="User Id" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="BookingDate" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Booking Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TotalRent" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="3" sap:unicode="false" sap:unit="Currency" sap:label="Rent Amount" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TotalDeposit" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="3" sap:unicode="false" sap:unit="Currency" sap:label="Deposit Amount" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Currency" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="Currency Key" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code"/>
+                <Property Name="BookingStatus" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Booking Status" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PaymentStatus" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Payment Status" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PaymentDate" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Booking Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <NavigationProperty Name="Bk_Header_Item_Nav" Relationship="ZB18_G4_JRS_SRV.Bk_Header_Item" FromRole="FromRole_Bk_Header_Item" ToRole="ToRole_Bk_Header_Item"/>
+            </EntityType>
+            <EntityType Name="BK_Item" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="BookingId"/>
+                    <PropertyRef Name="ItemId"/>
+                </Key>
+                <Property Name="BookingId" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Booking Id" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ItemId" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Item Id" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="5" Scale="0" sap:unicode="false" sap:unit="Unit" sap:label="Booking Item Quant" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Unit" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Internal UoM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/>
+                <Property Name="TotalRentPerDay" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="3" sap:unicode="false" sap:unit="Currency" sap:label="Rent Amount" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Currency" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="Currency Key" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code"/>
+                <Property Name="RentStartDate" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Rent Start Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="RentEndDate" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Rent End Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="Return" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="BookingId"/>
+                    <PropertyRef Name="ItemId"/>
+                </Key>
+                <Property Name="BookingId" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Booking Id" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ItemId" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Item Id" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ActualReturnDate" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Return Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CalculatedFine" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="3" sap:unicode="false" sap:unit="CurrKey" sap:label="Fine Amount" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Status" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Return Status" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CurrKey" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="Currency Key" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code"/>
+                <Property Name="ReturnedQuantity" Type="Edm.Decimal" Nullable="false" Precision="5" Scale="0" sap:unicode="false" sap:unit="Unit" sap:label="Returned Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Unit" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Internal UoM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/>
+                <Property Name="ItemCondn" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Return Item Conditio" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
             <EntityType Name="ZIB18_G4_Admin_BookType" sap:label="Admin Booking View" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="BookingID"/>
@@ -87,17 +132,47 @@
                 <Property Name="created_on" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Creation Date"/>
                 <Property Name="created_at" Type="Edm.Time" Precision="0" sap:label="Created Time"/>
             </EntityType>
+            <EntityType Name="ZIB18_G4_PaymentType" sap:label="Admin Payment Monitoring" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="BookingID"/>
+                </Key>
+                <Property Name="BookingID" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Booking Id"/>
+                <Property Name="CustomerName" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Name"/>
+                <Property Name="TotalRentalAmount" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="BookingCurrency" sap:label="Rent Amount"/>
+                <Property Name="BookingCurrency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency Key" sap:semantics="currency-code"/>
+                <Property Name="TotalDepositAmount" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="BookingCurrency" sap:label="Deposit Amount"/>
+                <Property Name="BookingCreationDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Booking Date"/>
+                <Property Name="PaymentProcessedDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Payment Date"/>
+                <Property Name="PaymentCurrentStatus" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Payment Status"/>
+                <Property Name="PaymentStatusDescription" Type="Edm.String" MaxLength="9"/>
+            </EntityType>
+            <EntityType Name="Zib18_g4_return_masterType" sap:label="Admin Return Master Page View" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="BookingID"/>
+                </Key>
+                <Property Name="BookingID" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Booking Id"/>
+                <Property Name="CustomerID" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="User Id"/>
+                <Property Name="CustomerName" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Name"/>
+                <Property Name="BookingStatus" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Booking Status"/>
+                <Property Name="PaymentStatus" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Payment Status"/>
+                <Property Name="TotalRent" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="Currency" sap:label="Rent Amount"/>
+                <Property Name="Currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency Key" sap:semantics="currency-code"/>
+                <Property Name="BookingDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Booking Date"/>
+            </EntityType>
             <EntityType Name="ZIB18_G4_USER_STATUSType" sap:label="User Booking Data" sap:content-version="1">
                 <Key>
+                    <PropertyRef Name="p_user_id"/>
                     <PropertyRef Name="booking_id"/>
                     <PropertyRef Name="item_id"/>
                 </Key>
+                <Property Name="p_user_id" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="User Id"/>
                 <Property Name="booking_id" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Booking Id"/>
                 <Property Name="item_id" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Item Id"/>
                 <Property Name="customer_id" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="User Id"/>
                 <Property Name="booking_date" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Booking Date"/>
                 <Property Name="currency" Type="Edm.String" MaxLength="5" sap:display-format="UpperCase" sap:label="Currency Key" sap:semantics="currency-code"/>
                 <Property Name="booking_status" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Booking Status"/>
+                <Property Name="payment_status" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Payment Status"/>
                 <Property Name="item_name" Type="Edm.String" MaxLength="20" sap:display-format="UpperCase" sap:label="Item Name"/>
                 <Property Name="quantity" Type="Edm.Decimal" Precision="5" Scale="0" sap:unit="quant_unit" sap:label="Booking Item Quant" sap:quickinfo="Booking Item Quantity"/>
                 <Property Name="quant_unit" Type="Edm.String" MaxLength="3" sap:label="Internal UoM" sap:quickinfo="Unit of Measurement" sap:semantics="unit-of-measure"/>
@@ -110,16 +185,90 @@
                 <Property Name="left_qty" Type="Edm.Decimal" Precision="34" Scale="6"/>
                 <Property Name="total_payable" Type="Edm.Decimal" Precision="17" Scale="3" sap:unit="curr_key"/>
                 <Property Name="total_booking_qty" Type="Edm.Decimal" Precision="5" Scale="0" sap:unit="quant_unit"/>
+                <NavigationProperty Name="Parameters" Relationship="ZB18_G4_JRS_SRV.assoc_AB2A65338898F0A8E3EAB33125C5BE46" FromRole="ToRole_assoc_AB2A65338898F0A8E3EAB33125C5BE46" ToRole="FromRole_assoc_AB2A65338898F0A8E3EAB33125C5BE46" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="ZIB18_G4_USER_STATUSParameters" sap:semantics="parameters" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="p_user_id"/>
+                </Key>
+                <Property Name="p_user_id" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:parameter="mandatory" sap:label="User Id" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <NavigationProperty Name="Set" Relationship="ZB18_G4_JRS_SRV.assoc_AB2A65338898F0A8E3EAB33125C5BE46" FromRole="FromRole_assoc_AB2A65338898F0A8E3EAB33125C5BE46" ToRole="ToRole_assoc_AB2A65338898F0A8E3EAB33125C5BE46"/>
+            </EntityType>
+            <Association Name="assoc_AB2A65338898F0A8E3EAB33125C5BE46" sap:content-version="1">
+                <End Type="ZB18_G4_JRS_SRV.ZIB18_G4_USER_STATUSParameters" Multiplicity="1" Role="FromRole_assoc_AB2A65338898F0A8E3EAB33125C5BE46"/>
+                <End Type="ZB18_G4_JRS_SRV.ZIB18_G4_USER_STATUSType" Multiplicity="*" Role="ToRole_assoc_AB2A65338898F0A8E3EAB33125C5BE46"/>
+            </Association>
+            <Association Name="Bk_Header_Item" sap:content-version="1">
+                <End Type="ZB18_G4_JRS_SRV.BK_Header" Multiplicity="1" Role="FromRole_Bk_Header_Item"/>
+                <End Type="ZB18_G4_JRS_SRV.BK_Item" Multiplicity="*" Role="ToRole_Bk_Header_Item"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_Bk_Header_Item">
+                        <PropertyRef Name="BookingId"/>
+                    </Principal>
+                    <Dependent Role="ToRole_Bk_Header_Item">
+                        <PropertyRef Name="BookingId"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
             <EntityContainer Name="ZB18_G4_JRS_SRV_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
-                <EntitySet Name="UserSet" EntityType="ZB18_G4_JRS_SRV.User" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="ZIB18_G4_Admin_Book" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_Admin_BookType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZIB18_G4_ITEM" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_ITEMType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
-                <EntitySet Name="ZIB18_G4_USER_STATUS" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_USER_STATUSType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZIB18_G4_Payment" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_PaymentType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="Zib18_g4_return_master" EntityType="ZB18_G4_JRS_SRV.Zib18_g4_return_masterType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZIB18_G4_USER_STATUSSet" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_USER_STATUSType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="ZIB18_G4_USER_STATUS" EntityType="ZB18_G4_JRS_SRV.ZIB18_G4_USER_STATUSParameters" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="UserSet" EntityType="ZB18_G4_JRS_SRV.User" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="BK_HeaderSet" EntityType="ZB18_G4_JRS_SRV.BK_Header" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="BK_ItemSet" EntityType="ZB18_G4_JRS_SRV.BK_Item" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="ReturnSet" EntityType="ZB18_G4_JRS_SRV.Return" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <AssociationSet Name="Bk_Header_ItemSet" Association="ZB18_G4_JRS_SRV.Bk_Header_Item" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="BK_HeaderSet" Role="FromRole_Bk_Header_Item"/>
+                    <End EntitySet="BK_ItemSet" Role="ToRole_Bk_Header_Item"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_AB2A65338898F0A8E3EAB33125C5BE46" Association="ZB18_G4_JRS_SRV.assoc_AB2A65338898F0A8E3EAB33125C5BE46" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="ZIB18_G4_USER_STATUS" Role="FromRole_assoc_AB2A65338898F0A8E3EAB33125C5BE46"/>
+                    <End EntitySet="ZIB18_G4_USER_STATUSSet" Role="ToRole_assoc_AB2A65338898F0A8E3EAB33125C5BE46"/>
+                </AssociationSet>
             </EntityContainer>
             <Annotation Term="Core.SchemaVersion" String="1.0.0" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
             <Annotations Target="ZB18_G4_JRS_SRV.ZB18_G4_JRS_SRV_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ZB18_G4_JRS_SRV.ZB18_G4_JRS_SRV_Entities/ZIB18_G4_USER_STATUS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>p_user_id</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.NavigationRestrictions">
+                    <Record>
+                        <PropertyValue Property="RestrictedProperties">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="NavigationProperty" NavigationPropertyPath="Parameters"/>
+                                    <PropertyValue Property="FilterRestrictions">
+                                        <Record>
+                                            <PropertyValue Property="Filterable" Bool="false"/>
+                                        </Record>
+                                    </PropertyValue>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>p_user_id</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
             </Annotations>
             <atom:link rel="self" href="/sap/opu/odata/sap/ZB18_G4_JRS_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
             <atom:link rel="latest-version" href="/sap/opu/odata/sap/ZB18_G4_JRS_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>

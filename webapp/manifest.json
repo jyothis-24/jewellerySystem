@@ -112,7 +112,7 @@
         },
         {
           "name": "RouteSuccess",
-          "pattern": "bookSuccess",
+          "pattern": "success/{bookingId}",
           "target": "TargetSuccess"
         }
       ],

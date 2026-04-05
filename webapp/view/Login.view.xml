@@ -62,13 +62,12 @@
                             </VBox>
 
                         </VBox>
-                       <HBox 
+                        <HBox 
                             justifyContent="Center"
-                            alignItems="Center"
                             class="sapUiSmallMarginTop">
 
-                            <Text text="New here?"/>
-                            <Link text="Create an account" press="onSignup"/>
+                            <Text text="Create an account? "/>
+                            <Link text=" New here " press="onSignup"/>
                     </HBox>
                     </content>
                 </Panel>

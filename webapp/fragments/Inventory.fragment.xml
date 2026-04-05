@@ -1,72 +1,76 @@
 <core:FragmentDefinition
-    xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:l="sap.ui.layout">
+xmlns="sap.m"
+xmlns:core="sap.ui.core"
+xmlns:l="sap.ui.layout">
 
-            <VBox class="sapUiResponsiveMargin">
-                <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
-                    <VBox>
-                        <Title text="Inventory Management" titleStyle="H2" />
-                        <Text text="Edit values directly in the table or add new rows" />
-                    </VBox>
-                    <HBox>
-                        <Button id="filterButton" icon="sap-icon://filter" text="Filter" press="onFilterPress" class="sapUiSmallMarginEnd" />
-                        <Button text="+ Add New Item" type="Emphasized" press="onAddNewItem" />
-                    </HBox>
-                </HBox>
-
-                <Table id="idInventoryTable" items="{/InventoryItems}" sticky="HeaderToolbar,ColumnHeaders">
-                    <columns>
-                        <Column width="10%"><Text text="ID" /></Column>
-                        <Column width="25%"><Text text="PRODUCT NAME" /></Column>
-                        <Column width="15%"><Text text="CATEGORY" /></Column>
-                        <Column width="10%"><Text text="TOTAL QTY" /></Column>
-                        <Column width="10%"><Text text="AVAILABLE" /></Column>
-                        <Column width="20%" hAlign="End"><Text text="ACTIONS" /></Column>
-                    </columns>
-
-                    <items>
-                        <ColumnListItem>
-                            <cells>
-                                <Text text="{ID}" />
-                                
-                                <VBox>
-                                    <Text text="{ProductName}" visible="{= !${editMode} }" fontBold="true" />
-                                    <Input value="{ProductName}" visible="{editMode}" />
-                                </VBox>
-
-                                <VBox>
-                                    <ObjectStatus text="{Category}" state="None" visible="{= !${editMode} }" class="customTokenStyle" />
-                                    <Select selectedKey="{Category}" visible="{editMode}" width="100%">
-                                        <core:Item key="Traditional" text="Traditional" />
-                                        <core:Item key="Modern" text="Modern" />
-                                        <core:Item key="Ethnic" text="Ethnic" />
-                                        <core:Item key="Wedding" text="Wedding" />
-                                    </Select>
-                                </VBox>
-
-                                <VBox>
-                                    <Text text="{TotalQty}" visible="{= !${editMode} }" />
-                                    <Input value="{TotalQty}" visible="{editMode}" type="Number" />
-                                </VBox>
-
-                                <VBox>
-                                    <Text text="{Available}" visible="{= !${editMode} }" />
-                                    <Input value="{Available}" visible="{editMode}" type="Number" />
-                                </VBox>
-
-                                <HBox justifyContent="End" alignItems="Center">
-                                    <Button icon="sap-icon://edit" text="Edit" press="onEditRow" visible="{= !${editMode} }" class="sapUiTinyMarginEnd" />
-                                    <Button icon="sap-icon://delete" type="Transparent" press="onDeleteRow" visible="{= !${editMode} }" />
-                                    
-                                    <Button text="Save" type="Accept" press="onSaveRow" visible="{editMode}" class="sapUiTinyMarginEnd" />
-                                    <Button text="Cancel" type="Transparent" press="onCancelRow" visible="{editMode}" />
-                                </HBox>
-                            </cells>
-                        </ColumnListItem>
-                    </items>
-                </Table>
-            </VBox>
+    <VBox class="sapUiResponsiveMargin">
+        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
+<VBox>
+<Title text="Inventory Management" titleStyle="H2" />
+<Text text="Edit values directly in the table or add new rows" />
+</VBox>
+<HBox>
      
+<!-- FILTER BUTTON (optional prompt) -->
+<Button text="Filter" icon="sap-icon://filter" press="onFilterItem" class="sapUiSmallMarginEnd" />
+<Button text="+ Add New Item" type="Emphasized" press="onAddNewItem" />
+</HBox>
+</HBox>
+
+<Table id="idInventoryTable" items="{/ZIB18_G4_ITEM}" sticky="HeaderToolbar,ColumnHeaders">
+
+<columns>
+<Column width="10%"><Text text="ID" /></Column>
+<Column width="20%"><Text text="PRODUCT NAME" /></Column>
+<Column width="15%"><Text text="PRODUCT TYPE" /></Column>
+<Column width="10%"><Text text="CATEGORY" /></Column>
+<Column width="10%"><Text text="TOTAL QTY" /></Column>
+<Column width="10%"><Text text="AVAILABLE" /></Column>
+<Column width="10%" ><Text text="ACTIONS" /></Column>
+</columns>
+
+<items>
+<ColumnListItem>
+<cells>
+
+<!-- ID (always read-only) -->
+<Text text="{item_id}" />
+
+<!-- Product Name -->
+<Input value="{item_name}" editable="false" id="productNameInput" />
+
+<!-- Product Type -->
+<Select selectedKey="{type}" editable="false" id="typeSelect" width="100%">
+<core:Item key="Oxidised Silver" text="Oxidised Silver" />
+<core:Item key="Hand Made" text="Hand Made" />
+</Select>
+
+<!-- Category -->
+<Select selectedKey="{category}" editable="false" id="categorySelect" width="100%">
+<core:Item key="Traditional" text="Traditional" />
+<core:Item key="Modern" text="Modern" />
+<core:Item key="Ethnic" text="Ethnic" />
+<core:Item key="Wedding" text="Wedding" />
+</Select>
+
+<!-- Total Qty -->
+<Input value="{total_qty}" type="Number" editable="false" id="totalQtyInput" />
+
+<!-- Available Qty -->
+<Input value="{available_qty}" type="Number" editable="false" id="availableQtyInput" />
+
+<!-- Actions -->
+<HBox justifyContent="End" alignItems="Center">
+<Button icon="sap-icon://edit" text="Edit" press="onEditRow" id="editBtn"/>
+<Button text="Save" type="Accept" press="onSaveRow" enabled="false" id="saveBtn"/>
+</HBox>
+
+</cells>
+</ColumnListItem> 
+</items>
+
+</Table>
+</VBox>
+
 
 </core:FragmentDefinition>
