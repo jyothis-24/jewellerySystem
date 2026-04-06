@@ -24,7 +24,13 @@
                                 </VBox>
                                 <VBox alignItems="End">
                                     <Text text="RENTAL QTY"/>
-                                    <Input change='onQuantChange' type="Number" value="{booking>qty}" width="60px" maxLength="5"/>
+                                    <Input 
+                                            type="Number"
+                                            value="{booking>qty}"
+                                            change="onQuantChange"
+                                            liveChange="onQuantLiveChange"
+                                            width="60px"
+                                            maxLength="5"/>
                                 </VBox>
                             </HBox>
 

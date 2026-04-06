@@ -251,57 +251,84 @@ _loadStatus: function(customerId) {
         // },
         onPayNow: function (oEvent) {
 
-    var oButton = oEvent.getSource();
-    var oContext = oButton.getBindingContext("grouped"); // default model
+            var oButton = oEvent.getSource();
+            var oContext = oButton.getBindingContext("grouped"); // default model
 
-    if (!oContext) {
-        sap.m.MessageToast.show("No booking found");
-        return;
-    }
+            if (!oContext) {
+                sap.m.MessageToast.show("No booking found");
+                return;
+            }
 
-    var sBookingId = oContext.getProperty("booking_id"); //  must match CDS
+            var sBookingId = oContext.getProperty("booking_id"); //  must match CDS
 
-    var oModel = this.getView().getModel();
+            var oModel = this.getView().getModel();
 
-    sap.m.MessageBox.confirm(
-        "Are you sure you want to confirm payment?",
-        {
-            title: "Confirm Payment",
+            sap.m.MessageBox.confirm(
+                "Are you sure you want to confirm payment?",
+                {
+                    title: "Confirm Payment",
 
-            actions: [
-                sap.m.MessageBox.Action.YES,
-                sap.m.MessageBox.Action.NO
-            ],
+                    actions: [
+                        sap.m.MessageBox.Action.YES,
+                        sap.m.MessageBox.Action.NO
+                    ],
 
-            onClose: function (sAction) {
+                    onClose: function (sAction) {
 
-                if (sAction === sap.m.MessageBox.Action.YES) {
-                    debugger;
-                    //  Correct OData key format
-                    var sPath = "/ZIB18_G4_Payment(BookingID='" + sBookingId + "')";
-                    var oPayload = {
-                        "PaymentCurrentStatus": "C"   //  backend expects code
-                    };
+                        if (sAction === sap.m.MessageBox.Action.YES) {
+                            debugger;
+                            //  Correct OData key format
+                            var sPath = "/ZIB18_G4_Payment(BookingID='" + sBookingId + "')";
+                            var oPayload = {
+                                "PaymentCurrentStatus": "C"   //  backend expects code
+                            };
 
-                    oModel.update(sPath, oPayload, {
-                        success: function (oData) {
-                            sap.m.MessageToast.show("Payment Confirmed!");
+                            oModel.update(sPath, oPayload, {
+                                success: function (oData) {
+                                    sap.m.MessageToast.show("Payment Confirmed!");
 
-                            //  refresh
-                            oModel.refresh();
-                        },
+                                    //  refresh
+                                    oModel.refresh();
+                                },
 
-                        error: function (oError) {
-                            console.error("Update failed:", oError);
-                            sap.m.MessageToast.show("Payment Failed!");
+                               error: function (oError) {
+                                debugger
+                                        var sMessage = "Payment Failed"; // fallback
+
+                                        // try {
+                                        //     var oResponse = JSON.parse(oError.responseText);
+
+                                        //     if (oResponse.error && oResponse.error.message && oResponse.error.message.value) {
+                                        //         sMessage = oResponse.error.message.value;
+                                        //     }
+
+                                        // } catch (e) {
+                                        //     console.error("Error parsing response:", e);
+                                        // }
+
+                                        // sap.m.MessageBox.error(sMessage);
+                                        
+                                        try {
+                                            // Parse backend error message
+                                            var oResponse = JSON.parse(oError.responseText);
+                                            // This is  ABAP ev_msg value
+                                            sMessage = oResponse.error.message.value;
+                                        } catch (e) {
+                                            sMessage = oError.message || sMessage;
+                                        }
+                    
+                                        // Show error in  popup
+                                        sap.m.MessageBox.error(sMessage);
+                    
+
+                                    }
+                            });
                         }
-                    });
-                }
 
-            }.bind(this)
-        }
-    );
-},
+                    }.bind(this)
+                }
+            );
+        },
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         // // View Fine button press handler
         // onViewFine: function (oEvent) {

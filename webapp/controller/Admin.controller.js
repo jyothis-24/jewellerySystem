@@ -23,6 +23,22 @@ onInit: function () {
 
         }.bind(this)
     });
+
+    // Create a JSON model to store today's date
+    const oJson = new sap.ui.model.json.JSONModel();
+    var oView = this.getView();
+    
+    // Get today's date in "yyyy-MM-dd" format
+    var today = new Date();
+    var todayString = today.toISOString().split('T')[0]; // Get date in "yyyy-MM-dd" format
+
+    // Set today's date in the model
+    oJson.setProperty("/minReturnDate", today);
+    
+    // Set the model to the view
+    oView.setModel(oJson, "todayModel");
+
+    
 },
 
 _groupBookings: function (aData) {
@@ -498,7 +514,8 @@ onApproveConfirm: function () {
                         Status: item.Status || "R",
                         Condition: item.Conditions ? (item.Conditions === "true" ? "G" : "B") : "G",
                         ReturnDate: item.ReturnDate || null,
-                        CalculatedFine: item.CalculatedFine || 0
+                        CalculatedFine: item.CalculatedFine || 0,
+                        LeftQty: item.left_qty || 0
                     }));
 
                     const oJson = new sap.ui.model.json.JSONModel(aItems);
@@ -560,45 +577,54 @@ onApproveConfirm: function () {
 
             // Date
             const formattedDate = this._formatDate(item.ReturnDate);
-            if (!formattedDate) {
+            if (!formattedDate && item.Status !== 'L') {
                 sap.m.MessageToast.show("Select return date");
                 return;
             }
                 //  LOST (L)
                 if (item.Status === "L") {
                     item.Condition = "";
-                    item.ReturnedQty = 0;
                 }
 
                 //  RETURNED (R)
                 if (item.Status === "R") {
 
                     if (!item.ReturnedQty || item.ReturnedQty <= 0) {
-                        sap.m.MessageToast.show("Enter returned quantity");
+                        sap.m.MessageToast.show("Enter the correct returned quantity");
                         return;
                     }
 
-                    if (item.ReturnedQty > item.Quantity) {
-                        sap.m.MessageToast.show("Returned qty cannot exceed total qty");
+                    if ( item.ReturnedQty >= item.left_qty) {
+                        sap.m.MessageToast.show("Returned qty cannot exceed  left qty ");
                         return;
                     }
                     if (!item.Conditions || item.Conditions === "") {
                             sap.m.MessageToast.show("Select Item condition (Good/Bad)");
                             return;
-                        }
+                    }
+                
 
                 }
-
+                if (!item.ReturnedQty )
+                {
+                    sap.m.MessageToast.show("Please Enter the Return Quantity");
+                    return;
+                }
+                if (parseInt(oData.ReturnedQty) > parseInt(oData.LeftQty)) {
+                        sap.m.MessageToast.show("Returned qty cannot exceed left quantity");
+                        return;
+                }
+                
 
             // ================= PAYLOAD =================
 
             const oPayload = {
                 BookingId: oHeader.BookingID,
                 ItemId: item.ItemID,
-                ReturnedQuantity: item.ReturnedQty,
+                ReturnedQuantity: item.ReturnedQty||0,
                 Status: item.Status,                      
                 ItemCondn: item.Conditions,
-                ActualReturnDate: formattedDate,
+                ActualReturnDate: formattedDate ||  "/Date(000000000)/",
                 CurrKey: oHeader.Currency,
                 Unit: item.Unit
             };
@@ -1176,43 +1202,329 @@ onAddNewItem: function () {
     }
 },
 
-        onSaveNewItem: function () {
+        // onSaveNewItem: function () {
                 
-                var oModel = this.getView().getModel();
-                var oData = this.getView().getModel("newItem").getData();
+        //         var oModel = this.getView().getModel();
+        //         var oData = this.getView().getModel("newItem").getData();
 
-                if (!oData.item_name) {
-                    sap.m.MessageToast.show("Product Name is required");
+        //         if (!oData.item_name) {
+        //             sap.m.MessageToast.show("Product Name is required");
+        //             return;
+        //         }
+        //             var iTotalQty = parseInt(oData.total_qty, 10);
+        //             var iAvailableQty = parseInt(oData.available_qty, 10);
+
+        //             //  Check valid numbers
+        //             if (isNaN(iTotalQty) || isNaN(iAvailableQty)) {
+        //                 sap.m.MessageToast.show("Enter valid quantities");
+        //                 return;
+        //             }
+
+        //             //  Your main condition
+        //             if (iAvailableQty > iTotalQty) {
+        //                 sap.m.MessageToast.show("Available Qty cannot be greater than Total Qty");
+        //                 return;
+        //             }
+        //         debugger
+        //         oModel.create("/ZIB18_G4_ITEM", oData, {
+        //             success: function () {
+        //                 sap.m.MessageToast.show("Item Added Successfully");
+        //                 this._oDialog.close();
+        //             }.bind(this),
+        //             error: function () {
+        //                 sap.m.MessageToast.show("Error while saving");
+        //             }
+        //         });
+        // },
+        //     onCloseDialog: function () {
+        //         this._oDialog.close();
+        //     }
+
+
+        // ── Live change — runs on every keystroke ─────────────────────
+onNewItemLiveChange: function (oEvent) {
+    var oInput = oEvent.getSource();
+    var sValue = oEvent.getParameter("value");
+
+    // Only apply number restrictions to Number type inputs
+    if (oInput.getType && oInput.getType() === "Number") {
+
+        // ✅ Strip anything that is not a digit or decimal point
+        var sClean = sValue.replace(/[^0-9.]/g, "");
+
+        // ✅ Only one decimal point allowed
+        var aParts = sClean.split(".");
+        if (aParts.length > 2) {
+            sClean = aParts[0] + "." + aParts.slice(1).join("");
+        }
+
+        // ✅ Max 5 digits before decimal
+        if (aParts[0] && aParts[0].length > 5) {
+            aParts[0] = aParts[0].substring(0, 5);
+            sClean = aParts.join(".");
+        }
+
+        if (sClean !== sValue) {
+            oInput.setValue(sClean);
+        }
+
+        var fValue = parseFloat(sClean);
+
+        // Reset
+        oInput.setValueState("None");
+        oInput.setValueStateText("");
+
+        // ✅ Empty
+        if (!sClean || isNaN(fValue)) {
+            oInput.setValueState("Error");
+            oInput.setValueStateText("This field is required");
+            return;
+        }
+
+        // ✅ Negative or zero
+        if (fValue <= 0) {
+            oInput.setValueState("Error");
+            oInput.setValueStateText("Value must be greater than 0");
+            return;
+        }
+
+        // ✅ Cross-validate Available vs Total live
+        var oTotalInput     = sap.ui.core.Fragment.byId("addItemDialog", "inputTotalQty")
+                           || this.byId("inputTotalQty");
+        var oAvailableInput = sap.ui.core.Fragment.byId("addItemDialog", "inputAvailableQty")
+                           || this.byId("inputAvailableQty");
+
+        if (oTotalInput && oAvailableInput) {
+            var iTotal     = parseFloat(oTotalInput.getValue());
+            var iAvailable = parseFloat(oAvailableInput.getValue());
+
+            if (!isNaN(iTotal) && !isNaN(iAvailable)) {
+
+                // Both zero — show warning but allow
+                if (iTotal === 0 && iAvailable === 0) {
+                    oTotalInput.setValueState("Warning");
+                    oTotalInput.setValueStateText("Item will be marked as discontinued");
+                    oAvailableInput.setValueState("Warning");
+                    oAvailableInput.setValueStateText("Item will be marked as discontinued");
                     return;
                 }
-                    var iTotalQty = parseInt(oData.total_qty, 10);
-                    var iAvailableQty = parseInt(oData.available_qty, 10);
 
-                    //  Check valid numbers
-                    if (isNaN(iTotalQty) || isNaN(iAvailableQty)) {
-                        sap.m.MessageToast.show("Enter valid quantities");
-                        return;
+                // Available > Total
+                if (iAvailable > iTotal) {
+                    oAvailableInput.setValueState("Error");
+                    oAvailableInput.setValueStateText(
+                        "Available (" + iAvailable + ") cannot exceed Total (" + iTotal + ")"
+                    );
+                    oTotalInput.setValueState("Warning");
+                    oTotalInput.setValueStateText("Total is less than Available Qty");
+                } else {
+                    // Clear cross-validation states if now valid
+                    if (oAvailableInput.getValueState() === "Error") {
+                        oAvailableInput.setValueState("None");
                     }
-
-                    //  Your main condition
-                    if (iAvailableQty > iTotalQty) {
-                        sap.m.MessageToast.show("Available Qty cannot be greater than Total Qty");
-                        return;
+                    if (oTotalInput.getValueState() === "Warning") {
+                        oTotalInput.setValueState("None");
                     }
-                debugger
-                oModel.create("/ZIB18_G4_ITEM", oData, {
-                    success: function () {
-                        sap.m.MessageToast.show("Item Added Successfully");
-                        this._oDialog.close();
-                    }.bind(this),
-                    error: function () {
-                        sap.m.MessageToast.show("Error while saving");
-                    }
-                });
-        },
-            onCloseDialog: function () {
-                this._oDialog.close();
+                }
             }
+        }
+
+        oInput.setValueState("Success");
+        oInput.setValueStateText("");
+    }
+},
+
+// ── Save — full validation before OData call ──────────────────
+onSaveNewItem: function () {
+    var oNewItemModel = this.getView().getModel("newItem");
+    var oData         = oNewItemModel.getData();
+    var bValid        = true;
+
+    // Helper to get fragment controls
+    var byFragId = function (sId) {
+        return sap.ui.core.Fragment.byId("addItemDialog", sId) 
+            || this.byId(sId);
+    }.bind(this);
+
+    var oNameInput      = byFragId("inputItemName");
+    var oTotalInput     = byFragId("inputTotalQty");
+    var oAvailableInput = byFragId("inputAvailableQty");
+    var oRentInput      = byFragId("inputRentPerDay");
+    var oDepositInput   = byFragId("inputDeposit");
+    var oTypeSelect     = byFragId("selectType");
+    var oCategorySelect = byFragId("selectCategory");
+    var oUnitSelect     = byFragId("selectUnit");
+
+    // Reset all states
+    [oNameInput, oTotalInput, oAvailableInput, oRentInput, oDepositInput].forEach(function(ctrl) {
+        if (ctrl) { ctrl.setValueState("None"); ctrl.setValueStateText(""); }
+    });
+
+    // ✅ 1. Product Name
+    if (!oData.item_name || oData.item_name.trim() === "") {
+        oNameInput.setValueState("Error");
+        oNameInput.setValueStateText("Product name is required");
+        bValid = false;
+    }
+
+    // ✅ 2. Product Type
+    if (!oData.type || oData.type === "") {
+        sap.m.MessageToast.show("Please select a Product Type");
+        bValid = false;
+    }
+
+    // ✅ 3. Category
+    if (!oData.category || oData.category === "") {
+        sap.m.MessageToast.show("Please select a Category");
+        bValid = false;
+    }
+
+    // ✅ 4. Quantity Unit
+    if (!oData.quant_unit || oData.quant_unit === "") {
+        sap.m.MessageToast.show("Please select a Quantity Unit");
+        bValid = false;
+    }
+
+    var iTotalQty     = parseFloat(oData.total_qty);
+    var iAvailableQty = parseFloat(oData.available_qty);
+    var iRentPerDay   = parseFloat(oData.rent_per_day);
+    var iDeposit      = parseFloat(oData.deposit);
+
+    // ✅ 5. Total Qty
+    if (!oData.total_qty || isNaN(iTotalQty)) {
+        oTotalInput.setValueState("Error");
+        oTotalInput.setValueStateText("Total Quantity is required");
+        bValid = false;
+    } else if (iTotalQty < 0) {
+        oTotalInput.setValueState("Error");
+        oTotalInput.setValueStateText("Total Quantity cannot be negative");
+        bValid = false;
+    } else if (iTotalQty > 99999) {
+        oTotalInput.setValueState("Error");
+        oTotalInput.setValueStateText("Total Quantity is too large");
+        bValid = false;
+    }
+
+    // ✅ 6. Available Qty
+    if (!oData.available_qty || isNaN(iAvailableQty)) {
+        oAvailableInput.setValueState("Error");
+        oAvailableInput.setValueStateText("Available Quantity is required");
+        bValid = false;
+    } else if (iAvailableQty < 0) {
+        oAvailableInput.setValueState("Error");
+        oAvailableInput.setValueStateText("Available Quantity cannot be negative");
+        bValid = false;
+    } else if (iAvailableQty > 99999) {
+        oAvailableInput.setValueState("Error");
+        oAvailableInput.setValueStateText("Available Quantity is too large");
+        bValid = false;
+    }
+
+    // ✅ 7. Available vs Total cross check
+    if (!isNaN(iTotalQty) && !isNaN(iAvailableQty)) {
+
+        // Both zero — confirm before saving
+        if (iTotalQty === 0 && iAvailableQty === 0) {
+            sap.m.MessageBox.confirm(
+                "Both Total and Available Qty are 0. This item will be added as discontinued. Continue?",
+                {
+                    title: "Confirm",
+                    onClose: function (oAction) {
+                        if (oAction === sap.m.MessageBox.Action.OK) {
+                            this._doCreateItem(oData);
+                        }
+                    }.bind(this)
+                }
+            );
+            return;
+        }
+
+        // Only one is zero
+        if (iTotalQty === 0 && iAvailableQty !== 0) {
+            oTotalInput.setValueState("Error");
+            oTotalInput.setValueStateText("Total cannot be 0 when Available is " + iAvailableQty);
+            bValid = false;
+        }
+        if (iAvailableQty === 0 && iTotalQty !== 0) {
+            oAvailableInput.setValueState("Error");
+            oAvailableInput.setValueStateText("Available cannot be 0 when Total is " + iTotalQty);
+            bValid = false;
+        }
+
+        // Available exceeds Total
+        if (iAvailableQty > iTotalQty && iTotalQty > 0) {
+            oAvailableInput.setValueState("Error");
+            oAvailableInput.setValueStateText(
+                "Available (" + iAvailableQty + ") cannot exceed Total (" + iTotalQty + ")"
+            );
+            oTotalInput.setValueState("Warning");
+            oTotalInput.setValueStateText("Total is less than Available Qty");
+            bValid = false;
+        }
+    }
+
+    // ✅ 8. Rent Per Day
+    if (!oData.rent_per_day || isNaN(iRentPerDay)) {
+        oRentInput.setValueState("Error");
+        oRentInput.setValueStateText("Rent Per Day is required");
+        bValid = false;
+    } else if (iRentPerDay <= 0) {
+        oRentInput.setValueState("Error");
+        oRentInput.setValueStateText("Rent Per Day must be greater than 0");
+        bValid = false;
+    }
+
+    // ✅ 9. Deposit Amount
+    if (!oData.deposit || isNaN(iDeposit)) {
+        oDepositInput.setValueState("Error");
+        oDepositInput.setValueStateText("Deposit Amount is required");
+        bValid = false;
+    } else if (iDeposit <= 0) {
+        oDepositInput.setValueState("Error");
+        oDepositInput.setValueStateText("Deposit Amount must be greater than 0");
+        bValid = false;
+    }
+
+    // ✅ Stop if any validation failed
+    if (!bValid) {
+        sap.m.MessageToast.show("Please fix all errors before saving");
+        return;
+    }
+
+    // All valid — proceed
+    this._doCreateItem(oData);
+},
+
+// ── Actual OData create (separated so both-zero confirm can reuse) ──
+_doCreateItem: function (oData) {
+    var oModel = this.getView().getModel();
+
+    oModel.create("/ZIB18_G4_ITEM", oData, {
+        success: function () {
+            sap.m.MessageToast.show("Item Added Successfully");
+            this._oDialog.close();
+        }.bind(this),
+        error: function () {
+            sap.m.MessageToast.show("Error while saving. Please try again.");
+        }
+    });
+},
+
+onCloseDialog: function () {
+    // Reset all value states on close
+    var byFragId = function (sId) {
+        return sap.ui.core.Fragment.byId("addItemDialog", sId) 
+            || this.byId(sId);
+    }.bind(this);
+
+    ["inputItemName","inputTotalQty","inputAvailableQty",
+     "inputRentPerDay","inputDeposit"].forEach(function(sId) {
+        var oCtrl = byFragId(sId);
+        if (oCtrl) { oCtrl.setValueState("None"); }
+    });
+
+    this._oDialog.close();
+},
 
                 
                 });

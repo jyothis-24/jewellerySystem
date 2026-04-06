@@ -143,7 +143,7 @@ function (Controller) {
                     try {
                         // Parse backend error message
                         var oResponse = JSON.parse(oError.responseText);
-                        // This is our ABAP ev_msg value
+                        // This is  ABAP ev_msg value
                         sMessage = oResponse.error.message.value;
                     } catch (e) {
                         sMessage = oError.message || sMessage;

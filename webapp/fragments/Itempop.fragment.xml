@@ -4,57 +4,98 @@
 
     <VBox class="sapUiSmallMargin">
 
-        <!-- <Input placeholder="ID" value="{newItem>/item_id}" /> -->
-
-        <Input placeholder="Product Name" value="{newItem>/item_name}" />
+        <!-- Product Name -->
+        <Label text="Product Name" required="true" class="sapUiTinyMarginTop"/>
+        <Input 
+            id="inputItemName"
+            placeholder="Enter product name" 
+            value="{newItem>/item_name}"
+            liveChange="onNewItemLiveChange"/>
 
         <!-- Product Type -->
-        <Select selectedKey="{newItem>/type}">
+        <Label text="Product Type" required="true" class="sapUiTinyMarginTop"/>
+        <Select 
+            id="selectType"
+            selectedKey="{newItem>/type}"
+            width="100%">
+            <core:Item key="" text="-- Select Type --"/>
             <core:Item key="Oxidised Silver" text="Oxidised Silver"/>
             <core:Item key="Hand Made" text="Hand Made"/>
         </Select>
 
         <!-- Category -->
-        <Select selectedKey="{newItem>/category}">
+        <Label text="Category" required="true" class="sapUiTinyMarginTop"/>
+        <Select 
+            id="selectCategory"
+            selectedKey="{newItem>/category}"
+            width="100%">
+            <core:Item key="" text="-- Select Category --"/>
             <core:Item key="Traditional" text="Traditional"/>
             <core:Item key="Modern" text="Modern"/>
             <core:Item key="Ethnic" text="Ethnic"/>
             <core:Item key="Wedding" text="Wedding"/>
         </Select>
 
-       <!-- Quantity Unit -->
-        <Select selectedKey="{newItem>/quant_unit}">
-            <core:Item key="PC" text="Pieces"/>
+        <!-- Quantity Unit -->
+        <Label text="Quantity Unit" required="true" class="sapUiTinyMarginTop"/>
+        <Select 
+            id="selectUnit"
+            selectedKey="{newItem>/quant_unit}"
+            width="100%">
+            <core:Item key="" text="-- Select Unit --"/>
+            <core:Item key="PC"  text="Pieces"/>
             <core:Item key="PAA" text="Pairs"/>
         </Select>
 
         <!-- Total Qty -->
-        <Input type="Number" placeholder="Total Quantity" value="{newItem>/total_qty}" />
+        <Label text="Total Quantity" required="true" class="sapUiTinyMarginTop"/>
+        <Input 
+            id="inputTotalQty"
+            type="Number" 
+            placeholder="Enter total quantity" 
+            value="{newItem>/total_qty}"
+            liveChange="onNewItemLiveChange"/>
 
         <!-- Available Qty -->
-        <Input type="Number" placeholder="Available Quantity" value="{newItem>/available_qty}" />
+        <Label text="Available Quantity" required="true" class="sapUiTinyMarginTop"/>
+        <Input 
+            id="inputAvailableQty"
+            type="Number" 
+            placeholder="Enter available quantity" 
+            value="{newItem>/available_qty}"
+            liveChange="onNewItemLiveChange"/>
 
-        <!-- Rent -->
-        <Input type="Number" placeholder="Rent Per Day" value="{newItem>/rent_per_day}" />
+        <!-- Rent Per Day -->
+        <Label text="Rent Per Day" required="true" class="sapUiTinyMarginTop"/>
+        <Input 
+            id="inputRentPerDay"
+            type="Number" 
+            placeholder="Enter rent per day" 
+            value="{newItem>/rent_per_day}"
+            liveChange="onNewItemLiveChange"/>
 
-       <!-- Deposit -->
-<Input type="Number" placeholder="Deposit Amount" value="{newItem>/deposit}" />
-
-      <!-- Currency -->
-<!-- <Select selectedKey="{newItem>/curr_key}">
-    <core:Item key="INR" text="INR"/>
-    <core:Item key="USD" text="USD"/>
-</Select> -->
+        <!-- Deposit -->
+        <Label text="Deposit Amount" required="true" class="sapUiTinyMarginTop"/>
+        <Input 
+            id="inputDeposit"
+            type="Number" 
+            placeholder="Enter deposit amount" 
+            value="{newItem>/deposit}"
+            liveChange="onNewItemLiveChange"/>
 
         <!-- Image URL -->
-        <TextArea placeholder="Image URL" value="{newItem>/image_url}"  width="100%"/>
+        <Label text="Image URL" class="sapUiTinyMarginTop"/>
+        <TextArea 
+            id="inputImageUrl"
+            placeholder="Enter image URL (optional)" 
+            value="{newItem>/image_url}" 
+            width="100%"/>
 
     </VBox>
 
     <beginButton>
         <Button text="Save" type="Accept" press="onSaveNewItem"/>
     </beginButton>
-
     <endButton>
         <Button text="Cancel" press="onCloseDialog"/>
     </endButton>

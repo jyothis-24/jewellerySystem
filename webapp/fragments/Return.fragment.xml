@@ -71,6 +71,7 @@
                             <Column><Text text="Total Qty"/></Column>
                             <Column><Text text="Status"/></Column>
                             <Column><Text text="Condition"/></Column>
+                            <Column><Text text="Left Qty"/></Column>
                             <Column><Text text="Return Date"/></Column>
                             <Column><Text text="Returned Qty"/></Column>
                             <Column><Text text="Fine"/></Column>
@@ -114,11 +115,15 @@
                                     </items>
                                 </Select>
 
+                                     <!-- Left Qty -->
+                                    <Text text="{itemsModel>LeftQty}"/>
+
                                     <!-- Date -->
                                     <DatePicker 
                                         value="{itemsModel>ReturnDate}" 
                                         valueFormat="yyyy-MM-dd"
                                         displayFormat="dd-MM-yyyy"
+                                        minDate="{todayModel>/minReturnDate}" 
                                         editable="{= ${itemsModel>Status} !== 'L' }"/>
 
                                     <!-- Returned Qty -->
