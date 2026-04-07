@@ -10,16 +10,22 @@ sap.ui.define([
     return Controller.extend("com.applexus.finalproject.controller.User", {
 
       onInit: function () {
+                debugger;
                 var oRouter = this.getOwnerComponent().getRouter();
                 oRouter.getRoute("RouteUser").attachPatternMatched(this._onRouteMatched, this);
+
+                this.getView().setModel(new sap.ui.model.json.JSONModel({ 
+                    userName: "" }), "userSession"); 
         },
         _onRouteMatched: function () {
-    //  Refresh OData
-    var oModel = this.getView().getModel();
-    if (oModel) {
-        oModel.refresh(true);
-    }
-
+            var sUserName = sessionStorage.getItem("userName");     
+            this.getView().getModel("userSession").setProperty("/userName", sUserName || "");    
+            // //  Refresh OData
+            // var oModel = this.getView().getModel();
+            // if (oModel) {
+            //     oModel.refresh(true);
+            // }
+debugger;
     //  Refresh list binding
     var oList = this.byId("itemList");
     if (oList) {
@@ -156,8 +162,9 @@ sap.ui.define([
         },
         onLogoutPress: function () {
                 var oRouter = this.getOwnerComponent().getRouter();
-                    // Clear the session variable (currentUserCustomerId) on logout
+                    // Clear the session variable currentUserCustomerId and UserName on logout
                 sessionStorage.removeItem("currentUserCustomerId");
+                sessionStorage.removeItem("userName");
                 // Navigate to login
                 oRouter.navTo("RouteLogin");
 

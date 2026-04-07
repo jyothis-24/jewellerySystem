@@ -36,18 +36,18 @@ sap.ui.define(
             },
             _onRouteMatched: function () {
 
-    const oModel = this.getOwnerComponent().getModel("booking");
-    this.getView().setModel(oModel, "booking");
+                const oModel = this.getOwnerComponent().getModel("booking");
+                this.getView().setModel(oModel, "booking");
 
-    //  Recalculate totals every time page opens
-    this._calculateTotal();
+                //  Recalculate totals every time page opens
+                this._calculateTotal();
 
-    //  Reset terms checkbox + button
-    this.byId("cb1").setSelected(false);
-    this.byId("cb2").setSelected(false);
-    this.byId("cb3").setSelected(false);
-    this.byId("book").setEnabled(false);
-},
+                //  Reset terms checkbox + button
+                this.byId("cb1").setSelected(false);
+                this.byId("cb2").setSelected(false);
+                this.byId("cb3").setSelected(false);
+                this.byId("book").setEnabled(false);
+            },
 
             onDateChange: function (oEvent) {
                 this._calculateTotal();

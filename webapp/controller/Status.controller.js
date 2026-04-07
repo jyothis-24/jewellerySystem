@@ -128,6 +128,7 @@ _loadStatus: function(customerId) {
                     oMap[item.booking_id] = {
                         booking_id: item.booking_id,
                         items: [],
+                        quantity: item.quantity,
                         total_payable: item.total_payable,
                         booking_status: item.booking_status,
                         payment_status: item.payment_status,  // if you want to use it in binding
@@ -328,6 +329,9 @@ _loadStatus: function(customerId) {
                     }.bind(this)
                 }
             );
+        },
+        isPayEnabled: function(bookingStatus, paymentStatus) {
+                    return bookingStatus === "A" && paymentStatus !== "C";
         },
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         // // View Fine button press handler
@@ -543,7 +547,7 @@ onViewFine: function (oEvent) {
     }
 
     // Define the fine rate (this could be fetched from TVARVC or set statically)
-    const fineRate = 1.5; // Example: 1.5% fine rate
+    const fineRate = 1.5; 
 
     // Map item fields correctly and calculate fine
     const aFineData = aItems.map(function (item) {

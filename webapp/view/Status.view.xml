@@ -31,7 +31,6 @@
                             <core:Item key="PENDING" text="Pending"/>
                             <core:Item key="APPROVED" text="Approved"/>
                             <core:Item key="REJECTED" text="Rejected"/>
-                            <core:Item key="PARTIAL" text="Partially Approved"/>
                         </items>
                     </Select>
 
@@ -49,8 +48,9 @@
                 <columns>
                     <Column><Text text="BOOKING ID"/></Column>
                     <Column><Text text="ITEM LIST"/></Column>
+                    <Column><Text text="QUANTITY"/></Column>
                     <Column><Text text="TOTAL PAYABLE"/></Column>
-                    <Column><Text text="STATUS"/></Column>
+                    <Column><Text text="BOOKING STATUS"/></Column>
                     <Column><Text text="ACTION"/></Column>
                 </columns>
 
@@ -77,6 +77,7 @@
                                     </CustomListItem>
                                 </List>
                             </VBox>
+                            <Text text="{grouped>quantity}" />
                             <!-- Total payable -->
                             <Text text="{path: 'grouped>total_payable', formatter: '.formatCurrency'}"/>
 
@@ -96,7 +97,10 @@
                                 <Button
                                     text="PAY NOW"
                                     type="Emphasized"
-                                    enabled="{= ${grouped>booking_status} === 'A'}"
+                                    enabled="{path: 'grouped>', formatter: '.isPayEnabled', parts: [
+                                                {path: 'grouped>booking_status'},
+                                                {path: 'grouped>payment_status'}
+                                            ]}"
                                     press="onPayNow"/>
 
                                 <Button

@@ -40,15 +40,15 @@
                                 <HBox width="100%" justifyContent="SpaceBetween">
                                     <VBox width="48%">
                                         <Label text="Full Name"/>
-                                        <Input placeholder="Enter your name" value = "{userModel>/user/Name}"/>
+                                        <Input  id="nameId" placeholder="Enter your name" value = "{userModel>/user/Name}" liveChange="onNameChange"/> 
                                     </VBox>
 
                                     <VBox width="48%">
                                         <Label text="Phone"/>
                                         <Input  id="phid"
-                                                type="Tel" 
+                                                type="Number" 
                                                 placeholder="Enter phone number" 
-                                                value = "{userModel>/user/Phone}"/>
+                                                value = "{userModel>/user/Phone}" liveChange="onPhoneChange"/>
                                     </VBox>
                                 </HBox>
 
@@ -57,7 +57,7 @@
                                         class="sapUiSmallMarginTop"/>
                                 <Input  id="emailId"
                                         type="Email"
-                                        liveChange="validateFields"
+                                        liveChange="onEmailChange"
                                         placeholder="e.g. name@example.com" 
                                         value = "{userModel>/user/Email}" />
 
@@ -66,9 +66,10 @@
                                         class="sapUiSmallMarginTop"/>
                                 <TextArea 
                                         placeholder="Enter your full address"
+                                        id = "addrId"
                                         rows="3" 
                                         width="100%" 
-                                        value = "{userModel>/user/Address}" />
+                                        value = "{userModel>/user/Address}"   liveChange="onAddressChange"/>
 
                                
                                 <Label text="Password" 
@@ -76,7 +77,7 @@
                                 <Input  id="pid1"
                                         type="Password" 
                                         placeholder="Enter password"
-                                        value = "{userModel>/user/Password}" />
+                                        value = "{userModel>/user/Password}" liveChange="onPasswordChange"/>
 
                                 
                                 <Label text="Confirm Password" 
@@ -84,7 +85,7 @@
                                 <Input  id="pid2"
                                         type="Password" 
                                         placeholder="Confirm password"
-                                        value = "{userModel>/user/ConfirmPassword}" />
+                                        value = "{userModel>/user/ConfirmPassword}"   liveChange="onConfirmPasswordChange"/>
 
                                 
                                 <Button 

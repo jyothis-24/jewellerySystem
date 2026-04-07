@@ -39,7 +39,7 @@
                 <Column><Text text="ITEMS SELECTED"/></Column>
                 <Column hAlign="Center"><Text text="BOOKED QUANTITY"/></Column>
                 <Column><Text text="DATES"/></Column>
-                <Column><Text text="STATUS"/></Column>
+                <Column><Text text="BOOKING STATUS"/></Column>
                 <Column><Text text="PAYMENT STATUS"/></Column>
                 <Column><Text text="ADMIN OPTIONS"/></Column>
             </columns>

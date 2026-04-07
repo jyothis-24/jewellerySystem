@@ -14,7 +14,10 @@
         <content>
             <VBox class="sapUiSmallMargin">
             
-
+            <Title 
+                text="Hello {userSession>/userName} " 
+                level="H3"
+                class="sapUiSmallMarginBottom"/>
                 <!-- Search Bar -->
               <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
 

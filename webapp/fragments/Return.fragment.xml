@@ -64,16 +64,24 @@
                     </HBox>
 
                     <!-- TABLE -->
-                    <Table id="returnTable" items="{itemsModel>/}">
+                    <Table id="returnTable" items="{itemsModel>/}" >
 
                         <columns>
-                            <Column><Text text="Item"/></Column>
-                            <Column><Text text="Total Qty"/></Column>
-                            <Column><Text text="Status"/></Column>
-                            <Column><Text text="Condition"/></Column>
-                            <Column><Text text="Left Qty"/></Column>
-                            <Column><Text text="Return Date"/></Column>
-                            <Column><Text text="Returned Qty"/></Column>
+                            <Column width="100px">
+                                <Text text="Item"/>
+                            </Column>
+                            <Column><Text text="Total Quantity"/></Column>
+                            <Column width="130px">
+                                <Text text="Status"/>
+                            </Column>
+                            <Column width="120px">
+                                <Text text="Condition"/>
+                            </Column>
+                            <Column ><Text text="Left Quantity"/></Column>
+                            <Column width="110px">
+                                <Text text="Return Date"/>
+                            </Column>
+                            <Column><Text text="Returned Quantity"/></Column>
                             <Column><Text text="Fine"/></Column>
                             <Column><Text text="Action"/></Column>
                         </columns>
@@ -96,6 +104,7 @@
                                     <Select 
                                         selectedKey="{itemsModel>Status}" 
                                         change="onStatusChange"
+                                        width="100%"
                                         >
 
                                         <items>
@@ -108,7 +117,8 @@
 
                                     <!-- Condition -->
                                 <Select selectedKey="{itemsModel>Conditions}" 
-                                        enabled="{= ${itemsModel>Status} !== 'L' }">
+                                        enabled="{= ${itemsModel>Status} !== 'L' }"
+                                        width="100%">
                                     <items>
                                         <core:Item key="G" text="Good"/>
                                         <core:Item key="B" text="Damaged"/>
@@ -123,14 +133,14 @@
                                         value="{itemsModel>ReturnDate}" 
                                         valueFormat="yyyy-MM-dd"
                                         displayFormat="dd-MM-yyyy"
-                                        minDate="{todayModel>/minReturnDate}" 
+                                        maxDate="{todayModel>/minReturnDate}" 
                                         editable="{= ${itemsModel>Status} !== 'L' }"/>
 
                                     <!-- Returned Qty -->
                                     <Input 
                                         value="{itemsModel>ReturnedQty}" 
-                                        type="Number" 
-                                        width="80px"
+                                        type="Number"
+                                        liveChange="onQtyChange"
                                         />
 
                                     <!-- Fine -->

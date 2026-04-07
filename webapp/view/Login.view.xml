@@ -41,12 +41,14 @@
 
                                 <Label text="Email"/>
                                 <Input 
+                                    id="loginEmail"
                                     placeholder="Enter your email"
                                     value="{login>/email}"
                                      class="sapUiSmallMarginBottom"/>
 
                                 <Label text="Password"/>
                                 <Input 
+                                    id="loginPassword"
                                     type="Password"
                                     value="{login>/password}"
                                     placeholder="Enter your password"

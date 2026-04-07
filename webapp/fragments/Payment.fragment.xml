@@ -6,34 +6,43 @@
     <VBox class="sapUiSmallMargin">
 
         <!-- Header -->
-        <HBox justifyContent="SpaceBetween" alignItems="Center">
-            <Title text="Payment Monitoring" level="H2"/>
+        <Toolbar>
 
-            <HBox>
-                <SearchField
-                    width="200px"
-                    placeholder="Search Customer..."
-                    class="sapUiSmallMarginEnd"
-                    liveChange="onSearchPay"/>
-                    
-                <!--  FILTER BUTTON WITH DROPDOWN -->
-                <MenuButton
-                    id="filterButton1"
-                    text="Filter"
-                    icon="sap-icon://filter">
+    <!-- LEFT SIDE -->
+    <Button 
+        icon="sap-icon://sort"
+        tooltip="Sort by Booking ID"
+        press="onSortPayment"
+        class="sapUiSmallMarginEnd"/>
 
-                    <menu>
-                        <Menu itemSelected="onFilterSelect">
-                            <MenuItem text="All" key="ALL"/>
-                            <MenuItem text="Pending" key="P"/>
-                            <MenuItem text="Confirmed" key="C"/>
-                        </Menu>
-                    </menu>
+    <Title text="Payment Monitoring" level="H2"/>
+
+    <!-- PUSH RIGHT CONTENT -->
+    <ToolbarSpacer/>
+
+    <!-- RIGHT SIDE -->
+    <SearchField
+        width="200px"
+        placeholder="Search Customer..."
+        class="sapUiSmallMarginEnd"
+        liveChange="onSearchPay"/>
+
+    <MenuButton
+        id="filterButton1"
+        text="Filter"
+        icon="sap-icon://filter">
+
+        <menu>
+            <Menu itemSelected="onFilterSelect">
+                <MenuItem text="All" key="ALL"/>
+                <MenuItem text="Pending" key="P"/>
+                <MenuItem text="Confirmed" key="C"/>
+            </Menu>
+        </menu>
 
     </MenuButton>
-             
-            </HBox>
-        </HBox>
+
+</Toolbar>
 
        <Table id="idPaymentTable" items="{/ZIB18_G4_Payment}" class="sapUiMediumMarginTop">
 

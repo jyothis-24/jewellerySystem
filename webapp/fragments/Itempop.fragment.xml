@@ -21,6 +21,13 @@
             <core:Item key="" text="-- Select Type --"/>
             <core:Item key="Oxidised Silver" text="Oxidised Silver"/>
             <core:Item key="Hand Made" text="Hand Made"/>
+            <core:Item key="Gold Plated" text="Gold Plated"/>
+            <core:Item key="Silver" text="Silver"/>
+            <core:Item key="Artificial" text="Artificial"/>
+            <core:Item key="Stone Work" text="Stone Work"/>
+            <core:Item key="Pearl" text="Pearl"/>
+            <core:Item key="Temple Jewellery" text="Temple Jewellery"/>
+            <core:Item key="Antique Finish" text="Antique Finish"/>
         </Select>
 
         <!-- Category -->
@@ -34,6 +41,13 @@
             <core:Item key="Modern" text="Modern"/>
             <core:Item key="Ethnic" text="Ethnic"/>
             <core:Item key="Wedding" text="Wedding"/>
+            <core:Item key="Party Wear" text="Party Wear"/>
+            <core:Item key="Casual Wear" text="Casual Wear"/>
+            <core:Item key="Office Wear" text="Office Wear"/>
+            <core:Item key="Festival Collection" text="Festival Collection"/>
+            <core:Item key="Bridal Collection" text="Bridal Collection"/>
+            <core:Item key="Daily Use" text="Daily Use"/>
+            <core:Item key="Designer" text="Designer"/>
         </Select>
 
         <!-- Quantity Unit -->
@@ -48,13 +62,13 @@
         </Select>
 
         <!-- Total Qty -->
-        <Label text="Total Quantity" required="true" class="sapUiTinyMarginTop"/>
+        <!-- <Label text="Total Quantity" required="true" class="sapUiTinyMarginTop"/>
         <Input 
             id="inputTotalQty"
             type="Number" 
             placeholder="Enter total quantity" 
             value="{newItem>/total_qty}"
-            liveChange="onNewItemLiveChange"/>
+            liveChange="onNewItemLiveChange"/> -->
 
         <!-- Available Qty -->
         <Label text="Available Quantity" required="true" class="sapUiTinyMarginTop"/>
@@ -84,10 +98,10 @@
             liveChange="onNewItemLiveChange"/>
 
         <!-- Image URL -->
-        <Label text="Image URL" class="sapUiTinyMarginTop"/>
+        <Label text="Image URL"  required="true" class="sapUiTinyMarginTop"/>
         <TextArea 
             id="inputImageUrl"
-            placeholder="Enter image URL (optional)" 
+            placeholder="Enter image URL " 
             value="{newItem>/image_url}" 
             width="100%"/>
 

@@ -40,18 +40,23 @@ xmlns:l="sap.ui.layout">
 <Input value="{item_name}" editable="false" id="productNameInput" />
 
 <!-- Product Type -->
-<Select selectedKey="{type}" editable="false" id="typeSelect" width="100%">
+<!-- <Select selectedKey="{type}" enabled="false" id="typeSelect" width="100%">
 <core:Item key="Oxidised Silver" text="Oxidised Silver" />
 <core:Item key="Hand Made" text="Hand Made" />
-</Select>
+</Select> -->
+
+<Input value ="{type}" editable="false" id="typeSelect" width="100%"/>
 
 <!-- Category -->
-<Select selectedKey="{category}" editable="false" id="categorySelect" width="100%">
+
+<!-- <Select selectedKey="{category}" id="categorySelect" width="100%">
 <core:Item key="Traditional" text="Traditional" />
 <core:Item key="Modern" text="Modern" />
 <core:Item key="Ethnic" text="Ethnic" />
 <core:Item key="Wedding" text="Wedding" />
-</Select>
+</Select> -->
+
+<Input value ="{category}" editable="false" id="categorySelect" width="100%"/>
 
 <!-- Total Qty -->
 <Input value="{total_qty}" type="Number" editable="false" id="totalQtyInput" />
