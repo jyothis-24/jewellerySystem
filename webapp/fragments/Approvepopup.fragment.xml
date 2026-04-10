@@ -7,19 +7,19 @@
     stretch="{= ${device.system.phone} }"
     afterClose="onApproveDialogClose">
 
-    <VBox
-      id="itemsVBox"
-      width="100%"
-      renderType="Bare">
+        <VBox
+          id="itemsVBox"
+          width="100%"
+          renderType="Bare">
 
-      <!-- Items will be added dynamically -->
+          <!-- Items will be added dynamically -->
 
-    </VBox>
+        </VBox>
 
-    <buttons>
-      <Button text="Approve Selected" press="onApproveConfirm" />
-      <Button text="Cancel" press="onApproveCancel" />
-    </buttons>
+        <buttons>
+          <Button text="Approve Selected" press="onApproveConfirm" />
+          <Button text="Cancel" press="onApproveCancel" />
+        </buttons>
 
   </Dialog>
 </core:FragmentDefinition>

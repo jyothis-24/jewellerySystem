@@ -16,7 +16,7 @@
             <ToolbarSpacer />
 
             <SearchField
-                width="150px"
+                width="200px"
                 placeholder="Search Id or Booking"
                 liveChange="onSearch"/>
 
@@ -58,7 +58,7 @@
                                     <CustomListItem>
                                         <HBox>
                                             <Text text="{grouped>ItemDescription}"/>
-                                            <!-- <Text text=" (Qty: {grouped>Quantity})"/> -->
+                                         
                                         </HBox>
                                     </CustomListItem>
                                 </items>

@@ -1,81 +1,123 @@
 <core:FragmentDefinition
-xmlns="sap.m"
-xmlns:core="sap.ui.core"
-xmlns:l="sap.ui.layout">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
 
     <VBox class="sapUiResponsiveMargin">
-        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
-<VBox>
-<Title text="Inventory Management" titleStyle="H2" />
-<Text text="Edit values directly in the table or add new rows" />
-</VBox>
-<HBox>
-     
-<!-- FILTER BUTTON (optional prompt) -->
-<Button text="Filter" icon="sap-icon://filter" press="onFilterItem" class="sapUiSmallMarginEnd" />
-<Button text="+ Add New Item" type="Emphasized" press="onAddNewItem" />
-</HBox>
-</HBox>
+        
+        <HBox justifyContent="SpaceBetween"
+              alignItems="Center"
+              class="sapUiSmallMarginBottom">
+            
+            <VBox>
+                <Title text="Inventory Management" titleStyle="H2" />
+                <Text text="Edit values directly in the table or add new rows" />
+            </VBox>
 
-<Table id="idInventoryTable" items="{/ZIB18_G4_ITEM}" sticky="HeaderToolbar,ColumnHeaders">
+            <HBox>
+                <!-- FILTER BUTTON -->
+                <Button text="Filter"
+                        icon="sap-icon://filter"
+                        press="onFilterItem"
+                        class="sapUiSmallMarginEnd" />
 
-<columns>
-<Column width="10%"><Text text="ID" /></Column>
-<Column width="20%"><Text text="PRODUCT NAME" /></Column>
-<Column width="15%"><Text text="PRODUCT TYPE" /></Column>
-<Column width="10%"><Text text="CATEGORY" /></Column>
-<Column width="10%"><Text text="TOTAL QTY" /></Column>
-<Column width="10%"><Text text="AVAILABLE" /></Column>
-<Column width="10%" ><Text text="ACTIONS" /></Column>
-</columns>
+                <Button text="+ Add New Item"
+                        type="Emphasized"
+                        press="onAddNewItem" />
+            </HBox>
 
-<items>
-<ColumnListItem>
-<cells>
+        </HBox>
 
-<!-- ID (always read-only) -->
-<Text text="{item_id}" />
+        <Table id="idInventoryTable"
+               items="{/ZIB18_G4_ITEM}"
+               sticky="HeaderToolbar,ColumnHeaders">
 
-<!-- Product Name -->
-<Input value="{item_name}" editable="false" id="productNameInput" />
+            <columns>
+                <Column width="10%">
+                    <Text text="ID" />
+                </Column>
 
-<!-- Product Type -->
-<!-- <Select selectedKey="{type}" enabled="false" id="typeSelect" width="100%">
-<core:Item key="Oxidised Silver" text="Oxidised Silver" />
-<core:Item key="Hand Made" text="Hand Made" />
-</Select> -->
+                <Column width="20%">
+                    <Text text="PRODUCT NAME" />
+                </Column>
 
-<Input value ="{type}" editable="false" id="typeSelect" width="100%"/>
+                <Column width="15%">
+                    <Text text="PRODUCT TYPE" />
+                </Column>
 
-<!-- Category -->
+                <Column width="10%">
+                    <Text text="CATEGORY" />
+                </Column>
 
-<!-- <Select selectedKey="{category}" id="categorySelect" width="100%">
-<core:Item key="Traditional" text="Traditional" />
-<core:Item key="Modern" text="Modern" />
-<core:Item key="Ethnic" text="Ethnic" />
-<core:Item key="Wedding" text="Wedding" />
-</Select> -->
+                <Column width="10%">
+                    <Text text="TOTAL QTY" />
+                </Column>
 
-<Input value ="{category}" editable="false" id="categorySelect" width="100%"/>
+                <Column width="10%">
+                    <Text text="AVAILABLE" />
+                </Column>
 
-<!-- Total Qty -->
-<Input value="{total_qty}" type="Number" editable="false" id="totalQtyInput" />
+                <Column width="10%">
+                    <Text text="ACTIONS" />
+                </Column>
+            </columns>
 
-<!-- Available Qty -->
-<Input value="{available_qty}" type="Number" editable="false" id="availableQtyInput" />
+            <items>
+                <ColumnListItem>
+                    <cells>
 
-<!-- Actions -->
-<HBox justifyContent="End" alignItems="Center">
-<Button icon="sap-icon://edit" text="Edit" press="onEditRow" id="editBtn"/>
-<Button text="Save" type="Accept" press="onSaveRow" enabled="false" id="saveBtn"/>
-</HBox>
+                        <!-- ID -->
+                        <Text text="{item_id}" />
 
-</cells>
-</ColumnListItem> 
-</items>
+                        <!-- Product Name -->
+                        <Input value="{item_name}"
+                               editable="false"
+                               id="productNameInput" />
 
-</Table>
-</VBox>
+                        <!-- Product Type -->
+                        <Input value="{type}"
+                               editable="false"
+                               id="typeSelect"
+                               width="100%" />
 
+                        <!-- Category -->
+                        <Input value="{category}"
+                               editable="false"
+                               id="categorySelect"
+                               width="100%" />
+
+                        <!-- Total Qty -->
+                        <Input value="{total_qty}"
+                               type="Number"
+                               editable="false"
+                               id="totalQtyInput" />
+
+                        <!-- Available Qty -->
+                        <Input value="{available_qty}"
+                               type="Number"
+                               editable="false"
+                               id="availableQtyInput" />
+
+                        <!-- Actions -->
+                        <HBox justifyContent="End" alignItems="Center">
+                            <Button icon="sap-icon://edit"
+                                    text="Edit"
+                                    press="onEditRow"
+                                    id="editBtn" />
+
+                            <Button text="Save"
+                                    type="Accept"
+                                    press="onSaveRow"
+                                    enabled="false"
+                                    id="saveBtn" />
+                        </HBox>
+
+                    </cells>
+                </ColumnListItem>
+            </items>
+
+        </Table>
+
+    </VBox>
 
 </core:FragmentDefinition>

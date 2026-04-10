@@ -61,14 +61,6 @@
             <core:Item key="PAA" text="Pairs"/>
         </Select>
 
-        <!-- Total Qty -->
-        <!-- <Label text="Total Quantity" required="true" class="sapUiTinyMarginTop"/>
-        <Input 
-            id="inputTotalQty"
-            type="Number" 
-            placeholder="Enter total quantity" 
-            value="{newItem>/total_qty}"
-            liveChange="onNewItemLiveChange"/> -->
 
         <!-- Available Qty -->
         <Label text="Available Quantity" required="true" class="sapUiTinyMarginTop"/>

@@ -62,14 +62,7 @@
                             <!-- Booking ID -->
                             <Text text="{grouped>booking_id}"/>
 
-                            <!--  Item list inside cell -->
-                            <!-- <VBox>
-                                <List items="{grouped>items}" showSeparators="None">
-                                    <CustomListItem>
-                                        <Text text="{grouped>item_name}"/>
-                                    </CustomListItem>
-                                </List>
-                            </VBox> -->
+
                             <VBox>
                                 <List items="{grouped>items}" showSeparators="None">
                                     <CustomListItem>
@@ -81,12 +74,7 @@
                             <!-- Total payable -->
                             <Text text="{path: 'grouped>total_payable', formatter: '.formatCurrency'}"/>
 
-                            <!-- Status -->
-                            <!-- <ObjectStatus
-                                text="{= ${grouped>booking_status} === 'P' ? 'Pending' : 
-                                        ${grouped>booking_status} === 'R' ? 'Rejected' : 
-                                        ${grouped>booking_status} === 'A' ? 'Accepted' : 
-                                        ${grouped>booking_status} === 'B' ? 'Partially Approved}' : '' "/> -->
+
                         <ObjectStatus
                             text="{= ${grouped>booking_status} === 'P' ? 'Pending' : 
                                     ${grouped>booking_status} === 'R' ? 'Rejected' : 

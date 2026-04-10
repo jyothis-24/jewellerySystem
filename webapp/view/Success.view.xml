@@ -24,9 +24,7 @@
             text="{= 'Your Booking ID: ' + ${viewModel>/bookingId}}"
             class="sapUiSmallMarginBottom"
             textAlign="Center"
-            wrapping="true"
-            design="Bold"
-            color="Good"/>
+            wrapping="true"/>
 
         <!-- Description -->
         <Text 

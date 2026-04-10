@@ -10,7 +10,6 @@ sap.ui.define([
     return Controller.extend("com.applexus.finalproject.controller.User", {
 
       onInit: function () {
-                debugger;
                 var oRouter = this.getOwnerComponent().getRouter();
                 oRouter.getRoute("RouteUser").attachPatternMatched(this._onRouteMatched, this);
 
@@ -20,48 +19,47 @@ sap.ui.define([
         _onRouteMatched: function () {
             var sUserName = sessionStorage.getItem("userName");     
             this.getView().getModel("userSession").setProperty("/userName", sUserName || "");    
-            // //  Refresh OData
-            // var oModel = this.getView().getModel();
-            // if (oModel) {
-            //     oModel.refresh(true);
-            // }
-debugger;
-    //  Refresh list binding
-    var oList = this.byId("itemList");
-    if (oList) {
-        oList.getBinding("items").refresh();
-    }
+            //  Refresh OData
+            var oModel = this.getView().getModel();
+            if (oModel) {
+                oModel.refresh(true);
+            }
+            //  Refresh list binding
+            var oList = this.byId("itemList");
+            if (oList) {
+                oList.getBinding("items").refresh();
+            }
 
-    //  Reset checkboxes (IMPORTANT)
-    oList.getItems().forEach(function (oItem) {
-        var oCheckBox = oItem.getContent()[0]
-            .getItems()[0]
-            .getItems()[0]
-            .getItems()[0];
+            //  Reset checkboxes (IMPORTANT)
+            oList.getItems().forEach(function (oItem) {
+                var oCheckBox = oItem.getContent()[0]
+                    .getItems()[0]
+                    .getItems()[0]
+                    .getItems()[0];
 
-        oCheckBox.setSelected(false);
-    });
-},
+                oCheckBox.setSelected(false);
+            });
+        },
 
         onSearch: function (oEvent) {
            
             var sValue = oEvent.getParameter("newValue");
 
-        var oFilter1 = new sap.ui.model.Filter("item_name", sap.ui.model.FilterOperator.Contains, sValue);
-        var oFilter2 = new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains, sValue);
-        var oFilter3 = new sap.ui.model.Filter("category", sap.ui.model.FilterOperator.Contains, sValue);
+            var oFilter1 = new sap.ui.model.Filter("item_name", sap.ui.model.FilterOperator.Contains, sValue);
+            var oFilter2 = new sap.ui.model.Filter("type", sap.ui.model.FilterOperator.Contains, sValue);
+            var oFilter3 = new sap.ui.model.Filter("category", sap.ui.model.FilterOperator.Contains, sValue);
 
 
-        // Combine filters in an OR condition
-        var oMaster = new Filter({
-            filters: [oFilter1, oFilter2, oFilter3],
-            and: false // false = OR condition
-        });
+            // Combine filters in an OR condition
+            var oMaster = new Filter({
+                filters: [oFilter1, oFilter2, oFilter3],
+                and: false // false = OR condition
+            });
 
-            var oList = this.byId("itemList");
-            var oBinding = oList.getBinding("items");
+                var oList = this.byId("itemList");
+                var oBinding = oList.getBinding("items");
 
-            oBinding.filter([oMaster]);
+                oBinding.filter([oMaster]);
         },
 
         onPreview: function (oEvent) {
@@ -120,7 +118,7 @@ debugger;
 
 
                 if (oCheckBox.getSelected()) {
-                    debugger;
+        
                     const oCtx = oItem.getBindingContext();
                     const oData = oCtx.getObject();
 

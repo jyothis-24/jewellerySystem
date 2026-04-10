@@ -53,107 +53,62 @@ sap.ui.define(
                 this._calculateTotal();
             },
 
-    //    onQuantChange: function (oEvent) {
-    //         const oInput = oEvent.getSource();
-    //         const sValue = oInput.getValue();
+            onQuantLiveChange: function (oEvent) {
+                var oInput = oEvent.getSource();
+                var sValue = oEvent.getParameter("value");
 
-    //         const oContext = oInput.getBindingContext("booking");
-    //         const oItem = oContext.getObject();
+                //  Block characters — only allow digits
+                var sClean = sValue.replace(/[^0-9]/g, "");
+                if (sClean !== sValue) {
+                    oInput.setValue(sClean);
+                    oInput.setValueState("Error");
+                    oInput.setValueStateText("Only numbers are allowed");
+                    return;
+                }
 
-    //         const enteredQty = Number(sValue) || 0;
-    //         const availableQty = Number(oItem.availableQty) || 0;
+                //  Block if length exceeds 5 digits
+                if (sClean.length > 5) {
+                    sClean = sClean.substring(0, 5);
+                    oInput.setValue(sClean);
+                }
 
-    //         //  Invalid (greater than available)
-    //         if (enteredQty > availableQty) {
+                var iEntered   = parseInt(sClean, 10);
+                var oContext   = oInput.getBindingContext("booking");
+                var oItem      = oContext.getObject();
+                var iAvailable = Number(oItem.availableQty) || 0;
 
-    //             oInput.setValueState("Error");
-    //             oInput.setValueStateText("Max available: " + availableQty);
+                // Reset first
+                oInput.setValueState("None");
+                oInput.setValueStateText("");
 
-    //             sap.m.MessageToast.show("Quantity exceeds available stock");
+                //  Empty input
+                if (!sClean || isNaN(iEntered)) {
+                    oInput.setValueState("Error");
+                    oInput.setValueStateText("Quantity cannot be empty");
+                    return;
+                }
 
-    //             flag = 1;
-    //             return;
-    //         }
+                //  Zero entered
+                if (iEntered === 0) {
+                    oInput.setValueState("Error");
+                    oInput.setValueStateText("Quantity must be greater than 0");
+                    return;
+                }
 
-    //         //  Invalid (0 or negative)
-    //         if (enteredQty <= 0) {
+                //  Exceeds available
+                if (iEntered > iAvailable) {
+                    oInput.setValueState("Error");
+                    oInput.setValueStateText("Available stock is only " + iAvailable);
+                    return;
+                }
 
-    //             oInput.setValueState("Error");
-    //             oInput.setValueStateText("Enter valid quantity");
+                //  All good
+                oInput.setValueState("Success");
+                oInput.setValueStateText("Quantity is valid");
+                this._calculateTotal();
+        },
 
-    //             sap.m.MessageToast.show("Invalid quantity");
-
-    //             flag = 1;
-    //             return;
-    //         }
-
-    //         //  Valid
-    //         oInput.setValueState("None");
-    //         oInput.setValueStateText("");
-
-    //         flag = 0;
-
-    //         this._calculateTotal();
-
-    //     },
-
-
-    onQuantLiveChange: function (oEvent) {
-            var oInput = oEvent.getSource();
-            var sValue = oEvent.getParameter("value");
-
-            //  Block characters — only allow digits
-            var sClean = sValue.replace(/[^0-9]/g, "");
-            if (sClean !== sValue) {
-                oInput.setValue(sClean);
-                oInput.setValueState("Error");
-                oInput.setValueStateText("Only numbers are allowed");
-                return;
-            }
-
-            //  Block if length exceeds 5 digits
-            if (sClean.length > 5) {
-                sClean = sClean.substring(0, 5);
-                oInput.setValue(sClean);
-            }
-
-            var iEntered   = parseInt(sClean, 10);
-            var oContext   = oInput.getBindingContext("booking");
-            var oItem      = oContext.getObject();
-            var iAvailable = Number(oItem.availableQty) || 0;
-
-            // Reset first
-            oInput.setValueState("None");
-            oInput.setValueStateText("");
-
-            //  Empty input
-            if (!sClean || isNaN(iEntered)) {
-                oInput.setValueState("Error");
-                oInput.setValueStateText("Quantity cannot be empty");
-                return;
-            }
-
-            //  Zero entered
-            if (iEntered === 0) {
-                oInput.setValueState("Error");
-                oInput.setValueStateText("Quantity must be greater than 0");
-                return;
-            }
-
-            //  Exceeds available
-            if (iEntered > iAvailable) {
-                oInput.setValueState("Error");
-                oInput.setValueStateText("Available stock is only " + iAvailable);
-                return;
-            }
-
-            //  All good
-            oInput.setValueState("Success");
-            oInput.setValueStateText("Quantity is valid");
-            this._calculateTotal();
-    },
-
-    onQuantChange: function (oEvent) {
+        onQuantChange: function (oEvent) {
             var oInput     = oEvent.getSource();
             var sValue     = oInput.getValue();
             var oContext   = oInput.getBindingContext("booking");
@@ -197,11 +152,11 @@ sap.ui.define(
             oInput.setValueState("Success");
             oInput.setValueStateText("");
             this._calculateTotal();
-    },
+        },
 
 
   
-            onStartDateChange: function (oEvent) {
+        onStartDateChange: function (oEvent) {
 
                 var oStartDate = oEvent.getSource().getDateValue();
                 if (!oStartDate) return;
@@ -219,7 +174,7 @@ sap.ui.define(
                 }
 
                 this._calculateTotal();
-            },
+        },
 
             onEndDateChange: function (oEvent) {
 
@@ -294,222 +249,12 @@ sap.ui.define(
                 oModel.setProperty("/totalDeposit", totalDeposit);
                 oModel.setProperty("/total", totalVal);
             },
-
-   
-
             onBack: function () {
                
                 var oRouter = this.getOwnerComponent().getRouter();
                 oRouter.navTo("RouteUser");
             },
-            // onBookNow: function () { 
-                           
-
-            //     const oModel = this.getView().getModel("booking");
-            //     const total = Number(oModel.getProperty("/total")) || 0;
-            //     // var sUser = sessionStorage.getItem("currentUser");
-            //     // var oUserModel = sap.ui.getCore().getModel("user");
-            //     // var customerId = oUserModel.getProperty("/CustomerId");
-            //     // var customerId = '0000001019';
-            //     // var oUser = JSON.parse(sessionStorage.getItem("currentUser"));
-            //     // var customerId = oUser.CustomerId;
-            //     var customerId = sessionStorage.getItem("currentUserCustomerId");
-                
-            //     if (total === 0) {
-            //         sap.m.MessageToast.show("Total amount cannot be 0");
-            //         return;
-            //     }
-
-            //     if (flag !== 0) {
-            //         sap.m.MessageToast.show("Entered quantity exceeds available quantity");
-            //         return;
-            //     }
-
-            //     //  Build Deep Entity Payload
-            //     const aItems = oModel.getProperty("/items") || [];
-
-            //     const aItemPayload = aItems.map(function(item) {
-            //         return {
-            //             ItemId: item.id,
-            //             Quantity: String(item.qty),
-            //             Unit: item.unit,
-            //             TotalRentPerDay: item.price,
-            //             Currency: "INR",
-
-            //             RentStartDate: "/Date(" + new Date(item.startDate).getTime() + ")/",
-            //             RentEndDate: "/Date(" + new Date(item.endDate).getTime() + ")/"
-            //         };
-            //     });
-
-            //     const oPayload = {
-
-            //     CustomerId: customerId,
-
-            //     BookingDate: "/Date(" + new Date().getTime() + ")/",
-
-            //     TotalRent: oModel.getProperty("/totalRent").toFixed(3),
-            //     TotalDeposit: oModel.getProperty("/totalDeposit").toFixed(3),
-            //     Currency: "INR",
-            //     BookingStatus: "P",
-            //     PaymentStatus: "P",
-
-            //     PaymentDate: "/Date(" + new Date().getTime() + ")/",
-
-            //         // Navigation Property
-            //         Bk_Header_Item_Nav: aItemPayload
-            //     };
-                
-
-
-            //     // OData Call
-            //             var oDataModel = new sap.ui.model.odata.v2.ODataModel(
-            //             "/sap/opu/odata/sap/ZB18_G4_JRS_SRV"); // main OData model
-
-            //     oDataModel.create("/BK_HeaderSet", oPayload, {
-            //         success: function (oData) {
-            //             debugger
-            //             sap.m.MessageToast.show("Booking Created Successfully");
-            //             this.getOwnerComponent().setModel(null, "booking");
-            //             var bookingId = oData.BookingId; 
-            //             var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-            //                 // Pass bookingId as parameter
-            //             oRouter.navTo("RouteSuccess", {
-            //                 bookingId: bookingId
-            //             });
-            //             console.log("Before navigation Booking ID:", bookingId);
-            //         }.bind(this),
-
-            //         error: function (oError) {
-            //             console.log(oError);
-            //             sap.m.MessageToast.show("Error while creating booking");
-            //         }
-            //     });
-            // }
-
-    // onBookNow: function () { 
-
-    //         const oModel = this.getView().getModel("booking");
-    //         const total = Number(oModel.getProperty("/total")) || 0;
-    //         var customerId = sessionStorage.getItem("currentUserCustomerId");
-
-    //         //  CHECK UI INPUT ERRORS  gpt code working is this 
-    //         var bHasError = false;
-
-    //         this.getView().findAggregatedObjects(true, function (oControl) {
-    //             return oControl.isA("sap.m.Input");
-    //         }).forEach(function (oInput) {
-
-    //             if (oInput.getValueState && oInput.getValueState() === "Error") {
-    //                 bHasError = true;
-    //             }
-
-    //         });
-
-    //         if (bHasError) {
-    //             sap.m.MessageToast.show("Please fix quantity errors before proceeding");
-    //             return;
-    //         }
-
-    //         // . CHECK TOTAL
-    //         if (total === 0) {
-    //             sap.m.MessageToast.show("Total amount cannot be 0");
-    //             return;
-    //         }
-
-    //         // STRICT VALIDATION FOR EACH ITEM
-    //         const aItems = oModel.getProperty("/items") || [];
-
-    //         for (let i = 0; i < aItems.length; i++) {
-
-    //             let qty = Number(aItems[i].qty);
-    //             let available = Number(aItems[i].availableQty);
-
-    //             //  NOT A NUMBER OR EMPTY
-    //             if (!Number.isFinite(qty)) {
-    //                 sap.m.MessageToast.show("Invalid quantity entered");
-    //                 return;
-    //             }
-
-    //             //  NEGATIVE OR ZERO
-    //             if (qty <= 0) {
-    //                 sap.m.MessageToast.show("Quantity must be greater than 0");
-    //                 return;
-    //             }
-
-    //             //  EXCEEDS AVAILABLE
-    //             if (qty > available) {
-    //                 sap.m.MessageToast.show("Quantity exceeds available stock");
-    //                 return;
-    //             }
-
-    //             //  INFINITY OR VERY LARGE NUMBER
-    //             if (!isFinite(qty) || qty > 99999) {
-    //                 sap.m.MessageToast.show("Quantity value is too large");
-    //                 return;
-    //             }
-    //         }
-
-    //         //  BUILD PAYLOAD
-    //         const aItemPayload = aItems.map(function(item) {
-    //             return {
-    //                 ItemId: item.id,
-    //                 Quantity: String(item.qty),
-    //                 Unit: item.unit,
-    //                 TotalRentPerDay: item.price,
-    //                 Currency: "INR",
-
-    //                 RentStartDate: "/Date(" + new Date(item.startDate).getTime() + ")/",
-    //                 RentEndDate: "/Date(" + new Date(item.endDate).getTime() + ")/"
-    //             };
-    //         });
-
-    //         const oPayload = {
-
-    //             CustomerId: customerId,
-
-    //             BookingDate: "/Date(" + new Date().getTime() + ")/",
-
-    //             TotalRent: oModel.getProperty("/totalRent").toFixed(3),
-    //             TotalDeposit: oModel.getProperty("/totalDeposit").toFixed(3),
-    //             Currency: "INR",
-    //             BookingStatus: "P",
-    //             PaymentStatus: "P",
-
-    //             PaymentDate: "/Date(" + new Date().getTime() + ")/",
-
-    //             Bk_Header_Item_Nav: aItemPayload
-    //         };
-
-    //         // ODATA CALL
-    //         var oDataModel = new sap.ui.model.odata.v2.ODataModel(
-    //             "/sap/opu/odata/sap/ZB18_G4_JRS_SRV"
-    //         );
-
-    //         oDataModel.create("/BK_HeaderSet", oPayload, {
-    //             success: function (oData) {
-
-    //                 sap.m.MessageToast.show("Booking Created Successfully");
-
-    //                 this.getOwnerComponent().setModel(null, "booking");
-
-    //                 var bookingId = oData.BookingId;
-
-    //                 var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-
-    //                 oRouter.navTo("RouteSuccess", {
-    //                     bookingId: bookingId
-    //                 });
-
-    //             }.bind(this),
-
-    //             error: function () {
-    //                 sap.m.MessageToast.show("Error while creating booking");
-    //             }
-    //         });
-    //     }
-
-
-        onBookNow: function () {
+            onBookNow: function () {
                 var oModel     = this.getView().getModel("booking");
                 var total      = Number(oModel.getProperty("/total")) || 0;
                 var customerId = sessionStorage.getItem("currentUserCustomerId");
@@ -612,7 +357,7 @@ sap.ui.define(
                     return;
                 }
 
-                // ── All validated — Build Payload ─────────────────────────
+                //  All validated — Build Payload 
 
                 var aItemPayload = aItems.map(function (item) {
                     return {
@@ -638,7 +383,7 @@ sap.ui.define(
                     Bk_Header_Item_Nav: aItemPayload
                 };
 
-                // ── OData Call ────────────────────────────────────────────
+                //  OData Call
                 var oDataModel = new sap.ui.model.odata.v2.ODataModel(
                     "/sap/opu/odata/sap/ZB18_G4_JRS_SRV"
                 );
