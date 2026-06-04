@@ -1,0 +1,83 @@
+  METHOD userset_create_entity.
+
+    DATA : ls_input TYPE zb18t_g4_user,
+           ls_user  TYPE zb18t_g4_user.
+
+    DATA(lo_exp) = me->/iwbep/if_mgw_conv_srv_runtime~get_message_container( ). " Create a message container to store error messages
+
+    io_data_provider->read_entry_data(                                  "Read the input data from the request payload
+      IMPORTING
+        es_data = ls_input
+    ).
+
+
+    IF   ls_input-name     IS INITIAL   OR                              "Validating mandatory fields before processing user creation
+         ls_input-phone    IS INITIAL   OR
+         ls_input-email    IS INITIAL   OR
+         ls_input-address  IS INITIAL   OR
+         ls_input-password IS INITIAL   OR
+         ls_input-role     IS INITIAL .
+
+
+      lo_exp->add_message(
+             iv_msg_type               =    /iwbep/cl_cos_logger=>error " Message Type is error
+             iv_msg_id                 =    'ZB18_G4_JRS'               " Message Class
+             iv_msg_number             =     '001'                      " Message Number
+           ).
+      RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception                 "Raise a business exception with the error message
+        EXPORTING
+          message_container = lo_exp.
+
+    ELSE.
+
+      ls_input-email = to_upper( ls_input-email ).                      "Convert email to uppercase to ensure case-insensitive comparison
+
+      SELECT SINGLE email                                               "Check if user email already exists to avoid duplicates
+             FROM  zb18t_g4_user
+             WHERE email = @ls_input-email
+             INTO @DATA(lv_email).
+
+      IF sy-subrc = 0.                                                  "If the email already exists, raise an error message
+
+        lo_exp->add_message(
+            iv_msg_type               =    /iwbep/cl_cos_logger=>error  " Message Type
+            iv_msg_id                 =    'ZB18_G4_JRS'                " Message Class
+            iv_msg_number             =     '002'                       " Message Number
+          ).
+        RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+          EXPORTING
+            message_container = lo_exp.
+
+      ELSE.
+
+        CALL FUNCTION 'NUMBER_GET_NEXT'
+          EXPORTING
+            nr_range_nr = '1'
+            object      = 'ZB18_G4_UI'
+          IMPORTING
+            number      = ls_input-user_id.
+
+        ls_input-email = to_upper( ls_input-email ).
+
+        INSERT  zb18t_g4_user FROM ls_input.                            " If the insertion is successful, return the entity to the front-end
+
+        IF sy-subrc = 0.
+          er_entity = ls_input.
+        ELSE.
+          lo_exp->add_message(
+              iv_msg_type               =    /iwbep/cl_cos_logger=>error" Message Type
+              iv_msg_id                 =    'ZB18_G4_JRS'              " Message Class
+              iv_msg_number             =     '003'                     " Message Number
+          ).
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception             " Raise a business exception with the message container
+            EXPORTING
+              message_container = lo_exp.
+
+        ENDIF.
+
+      ENDIF.
+
+    ENDIF.
+
+
+  ENDMETHOD.

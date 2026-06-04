@@ -1,0 +1,56 @@
+  METHOD zib18_g4_item_create_entity.
+
+
+    DATA : ls_ts_item TYPE zcl_zb18_g4_jrs_mpc=>ts_zib18_g4_itemtype,
+           lo_msg     TYPE REF TO /iwbep/if_message_container.
+
+    lo_msg = me->/iwbep/if_mgw_conv_srv_runtime~get_message_container( )." Get message container
+
+    io_data_provider->read_entry_data(
+      IMPORTING
+        es_data = ls_ts_item
+    ).
+
+    CALL FUNCTION 'NUMBER_GET_NEXT'                                     "Generate unique Item ID using number range object
+      EXPORTING
+        nr_range_nr = '1'
+        object      = 'ZB18_G4_II'
+      IMPORTING
+        number      = ls_ts_item-item_id.
+
+    DATA(ls_item) = VALUE  zb18t_g4_item(                                "Prepare item data for database insert
+                           item_id = ls_ts_item-item_id
+                           item_name = ls_ts_item-item_name
+                           item_lost = ls_ts_item-item_lost
+                           created_at = ls_ts_item-created_at
+                           created_by = ls_ts_item-created_by
+                           created_on = ls_ts_item-created_on
+                           category = ls_ts_item-category
+                           type = ls_ts_item-type
+                           total_qty = ls_ts_item-total_qty
+                           available_qty = ls_ts_item-available_qty
+                           quant_unit = ls_ts_item-quant_unit
+                           rent_per_day = ls_ts_item-rent_per_day
+                           deposit = ls_ts_item-deposit
+                           curr_key = ls_ts_item-curr_key
+                           image_url = ls_ts_item-image_url ).
+
+      MODIFY zb18t_g4_item  FROM  ls_item.                                "Insert item data into database table
+
+    IF sy-subrc = 0.
+      er_entity = CORRESPONDING #( ls_item ).
+    ELSE.
+
+      lo_msg->add_message(
+        iv_msg_type   = 'E'
+        iv_msg_id     = 'ZB18_G4_JRS'
+        iv_msg_number = '006'                                           " Insert failed
+      ).
+
+      RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+        EXPORTING
+          message_container = lo_msg.
+
+    ENDIF.
+
+  ENDMETHOD.

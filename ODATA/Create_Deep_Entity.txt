@@ -1,0 +1,93 @@
+METHOD /iwbep/if_mgw_appl_srv_runtime~create_deep_entity.
+
+  DATA: ls_deep   TYPE zcl_zb18_g4_jrs_mpc_ext=>ty_final,
+        lt_item   TYPE STANDARD TABLE OF zb18t_g4_bkitem,
+        lv_number TYPE char10,
+        lo_msg    TYPE REF TO /iwbep/if_message_container.              "Message container for error handling
+
+  lo_msg = me->/iwbep/if_mgw_conv_srv_runtime~get_message_container( ). "Create message container for errors
+
+  io_data_provider->read_entry_data(                                    "Read the input data for the deep entity
+    IMPORTING
+      es_data = ls_deep
+  ).
+
+  CALL FUNCTION 'NUMBER_GET_NEXT'                                       "Generate a new booking ID from number range
+    EXPORTING
+      nr_range_nr = '1'
+      object      = 'ZB18_G4_BI'
+    IMPORTING
+      number      = lv_number.
+
+  DATA(lv_booking_id) = lv_number.
+
+
+  DATA(ls_header) = VALUE zb18t_g4_bkhead(                              "Prepare booking header data
+    booking_id     = lv_booking_id
+    customer_id    = ls_deep-customer_id
+    booking_date   = ls_deep-booking_date
+    total_rent     = ls_deep-total_rent
+    total_deposit  = ls_deep-total_deposit
+    currency       = ls_deep-currency
+    booking_status = ls_deep-booking_status
+    payment_status = ls_deep-payment_status
+    payment_date   = ls_deep-payment_date
+  ).
+
+  lt_item = VALUE #( FOR <item> IN ls_deep-bk_header_item_nav           "Prepare booking item data
+                   ( booking_id         = lv_booking_id
+                     item_id            = <item>-item_id
+                     quantity           = <item>-quantity
+                     unit               = <item>-unit
+                     total_rent_per_day = <item>-total_rent_per_day
+                     currency           = <item>-currency
+                     rent_start_date    = <item>-rent_start_date
+                     rent_end_date      = <item>-rent_end_date ) ).
+
+  TRY.
+
+      MODIFY zb18t_g4_bkhead FROM ls_header.
+
+      IF sy-subrc = 0.
+
+        MODIFY zb18t_g4_bkitem FROM TABLE lt_item.
+
+        IF sy-subrc = 0.
+          ls_deep-booking_id = lv_booking_id.
+          me->copy_data_to_ref(
+            EXPORTING is_data = ls_deep
+            CHANGING  cr_data = er_deep_entity ).
+        ELSE.
+          lo_msg->add_message(
+          iv_msg_type   = 'E'
+          iv_msg_id     = 'ZB18_G4_JRS'
+          iv_msg_number = '010' ).                                      " If insertion fails, raise an exception
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+            EXPORTING
+              message_container = lo_msg.
+        ENDIF.
+
+      ELSE.
+        lo_msg->add_message(
+        iv_msg_type   = 'E'
+        iv_msg_id     = 'ZB18_G4_JRS'
+        iv_msg_number = '010' ).                                        " If insertion fails, raise an exception
+        RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+          EXPORTING
+            message_container = lo_msg.
+      ENDIF.
+
+    CATCH cx_sy_open_sql_db INTO DATA(lx_insert_error).                 " Handle any database errors
+
+      lo_msg->add_message(
+        iv_msg_type   = 'E'
+        iv_msg_id     = 'ZB18_G4_JRS'
+        iv_msg_number = '004' ).
+
+      RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+        EXPORTING
+          message_container = lo_msg.
+
+  ENDTRY.
+
+ENDMETHOD.

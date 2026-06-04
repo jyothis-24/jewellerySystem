@@ -1,0 +1,233 @@
+  METHOD /iwbep/if_mgw_appl_srv_runtime~patch_entity.
+
+    DATA: ls_pay        TYPE zcl_zb18_g4_jrs_mpc_ext=>ts_zib18_g4_paymenttype,
+          lv_booking_id TYPE zb18t_g4_bkhead-booking_id,
+          ls_item       TYPE zcl_zb18_g4_jrs_mpc=>ts_zib18_g4_itemtype,
+          lv_item_id    TYPE zb18t_g4_item-item_id,
+          lt_master     TYPE TABLE OF zb18t_g4_item.
+
+    DATA(lo_msg) = me->mo_context->get_message_container( ).
+    DATA(lv_entity_set) = io_tech_request_context->get_entity_set_name( ).
+
+    CASE lv_entity_set.
+
+        "-----------------------------------------------------------
+        " Entity Set is ZIB18_G4_Payment
+        "----------------------------------------------------------
+
+        WHEN 'ZIB18_G4_Payment'.
+
+        io_data_provider->read_entry_data(                              " Read payload data
+          IMPORTING
+            es_data = ls_pay
+        ).
+        READ TABLE it_key_tab INTO DATA(ls_key)                         "Read the entry where name = 'BookingID'
+             WITH KEY name = 'BookingID'.
+
+        IF sy-subrc = 0.
+          lv_booking_id = ls_key-value.
+        ELSE.
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+            EXPORTING
+              message = 'BookingID not provided'.
+        ENDIF.
+
+        SELECT SINGLE payment_status
+               INTO @DATA(lv_status)
+               FROM zb18t_g4_bkhead
+               WHERE booking_id = @lv_booking_id.
+
+        IF lv_status = 'C'.                                             " Check if payment already completed
+
+          lo_msg->add_message(
+            iv_msg_type = 'S'
+            iv_msg_id   = 'ZB18_G4_JRS'                                 " Message class
+            iv_msg_number = '007'                                       " Message number
+          ).
+
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+            EXPORTING
+              message_container = lo_msg.
+
+        ENDIF.
+
+        UPDATE zb18t_g4_bkhead                                          " Update payment table
+             SET payment_status = ls_pay-paymentcurrentstatus
+             WHERE booking_id = lv_booking_id.
+
+        IF sy-subrc = 0 AND ls_pay-paymentcurrentstatus = 'C'.          " Only if payment completed
+
+          SELECT item_id,                                               " Get booking items
+                 Quantity
+                 INTO TABLE @DATA(lt_items)
+                 FROM zb18t_g4_bkitem
+                 WHERE booking_id = @lv_booking_id.
+
+          IF lt_items IS NOT INITIAL.
+
+            SORT lt_items BY item_id.                                   "Sort based on item_id
+*            DELETE ADJACENT DUPLICATES FROM lt_items COMPARING item_id."Not needed cause there is no duplications
+            SELECT mandt,                                               "Get item master data
+                   item_id,
+                   created_by,
+                   item_name,
+                   category,
+                   type,
+                   total_qty,
+                   available_qty,
+                   quant_unit,
+                   rent_per_day,
+                   deposit,
+                   curr_key,
+                   image_url,
+                   item_lost,
+                   created_on,
+                   created_at
+              INTO TABLE @lt_master
+              FROM zb18t_g4_item
+              FOR ALL ENTRIES IN @lt_items
+              WHERE item_id = @lt_items-item_id.
+
+            LOOP AT lt_master ASSIGNING FIELD-SYMBOL(<fs_master>).      " Reduce stock in internal table
+
+              READ TABLE lt_items INTO DATA(ls_items)
+                   WITH KEY item_id = <fs_master>-item_id
+                   BINARY SEARCH.
+
+              IF sy-subrc = 0.
+
+                IF <fs_master>-available_qty >= ls_items-quantity.      "Check whether there is enough stock
+
+                  <fs_master>-available_qty = <fs_master>-available_qty - ls_items-quantity.
+
+                ELSE.
+
+                  RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+                    EXPORTING
+                      message = |Insufficient stock for Item { <fs_master>-item_id }|.
+
+                ENDIF.
+
+              ENDIF.
+
+            ENDLOOP.
+
+            MODIFY zb18t_g4_item FROM TABLE lt_master .                 "Modifying the item master
+
+          ENDIF.
+
+          me->copy_data_to_ref(                                         " Return response
+            EXPORTING
+              is_data = ls_pay
+            CHANGING
+              cr_data = er_entity
+          ).
+        ELSE.
+
+            lo_msg->add_message(
+            iv_msg_type = 'E'
+            iv_msg_id   = 'ZB18_G4_JRS'                                 " Message class
+            iv_msg_number = '009'                                       " Message number
+          ).
+
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+            EXPORTING
+              message_container = lo_msg.
+
+        ENDIF.
+
+        "-----------------------------------------------------------
+        " Entity Set is ZIB18_G4_ITEM
+        "-----------------------------------------------------------
+
+      WHEN 'ZIB18_G4_ITEM'.                                             "When Entity Set is ZIB18_G4_ITEM
+
+        io_data_provider->read_entry_data(                              " Read payload data from front-end
+          IMPORTING
+            es_data = ls_item
+        ).
+        READ TABLE it_key_tab INTO DATA(ls_ikey)                        "  Read the key (item_id) from the request
+             WITH KEY name = 'item_id'.
+
+        IF sy-subrc = 0.
+          lv_item_id = ls_ikey-value.
+        ELSE.
+            lo_msg->add_message(
+            iv_msg_type = 'E'
+            iv_msg_id   = 'ZB18_G4_JRS'                                 " Message class
+            iv_msg_number = '010'                                       " Message number
+          ).
+
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+            EXPORTING
+              message_container = lo_msg.
+
+        ENDIF.
+
+        UPDATE zb18t_g4_item                                            "  Update the database directly (only total_qty and available_qty)
+           SET total_qty     = ls_item-total_qty
+               available_qty = ls_item-available_qty
+           WHERE item_id = lv_item_id.
+
+        IF sy-subrc = 0.                                                " Return the entity to front-end
+
+          me->copy_data_to_ref(
+            EXPORTING
+              is_data = ls_item
+            CHANGING
+              cr_data = er_entity
+          ).
+        ELSE.
+
+            lo_msg->add_message(
+            iv_msg_type = 'E'
+            iv_msg_id   = 'ZB18_G4_JRS'                                 " Message class
+            iv_msg_number = '009'                                       " Message number
+          ).
+
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+            EXPORTING
+              message_container = lo_msg.
+        ENDIF.
+
+        "-----------------------------------------------------------
+        " Entity Set is BK_HeaderSet
+        "----------------------------------------------------------
+
+      WHEN 'BK_HeaderSet'.
+
+        DATA : ls_bkhead TYPE ZB18t_G4_BkHead.
+
+        io_data_provider->read_entry_data(                              "  Read payload data from front-end
+          IMPORTING
+            es_data = ls_bkhead
+        ).
+        READ TABLE it_key_tab INTO DATA(ls_bkey)                        "  Read the key BookingId from the request
+             WITH KEY name = 'BookingId'.
+
+        IF sy-subrc = 0.
+
+          DATA(lv_bkey) = ls_bkey-value.
+
+          UPDATE zb18t_g4_bkhead
+            SET approver_id = ls_bkhead-approver_id
+                booking_status = ls_bkhead-booking_status
+            WHERE booking_id = lv_bkey.
+
+        ELSE.
+
+            lo_msg->add_message(
+            iv_msg_type = 'E'
+            iv_msg_id   = 'ZB18_G4_JRS'                                 " Message class
+            iv_msg_number = '009'                                       " Message number
+          ).
+
+          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+            EXPORTING
+              message_container = lo_msg.
+
+        ENDIF.
+
+    ENDCASE.
+
+  ENDMETHOD.

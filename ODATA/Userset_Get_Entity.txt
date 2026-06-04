@@ -1,0 +1,39 @@
+METHOD userset_get_entity.
+
+  DATA(lv_email) = to_upper( it_key_tab[ name = 'Email' ]-value ).      " Convert email to uppercase before comparison
+
+  DATA(lv_password) = it_key_tab[ name = 'Password' ]-value.
+
+  DATA(lo_msg) = me->/iwbep/if_mgw_conv_srv_runtime~get_message_container( )." Create a message container for error messages
+
+
+  SELECT SINGLE name,                                                   "Fetch user data from database
+                email,
+                password,
+                user_id,
+                role
+         FROM   zb18t_g4_user
+         WHERE  email    = @lv_email
+         AND    password = @lv_password
+         INTO   @DATA(ls_user).
+
+
+  IF sy-subrc = 0.                                                      " If user is found
+
+    er_entity = CORRESPONDING #( ls_user ).                             " Map the retrieved user data to the entity structure
+
+  ELSE.                                                                 " If no user is found or invalid credentials, add error message
+
+    lo_msg->add_message(
+      iv_msg_type   = 'E'
+      iv_msg_id     = 'ZB18_G4_JRS'
+      iv_msg_number = '005'                                             " Invalid login
+    ).
+
+    RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception                   " Raise exception with the message container
+      EXPORTING
+        message_container = lo_msg.
+
+  ENDIF.
+
+ENDMETHOD.

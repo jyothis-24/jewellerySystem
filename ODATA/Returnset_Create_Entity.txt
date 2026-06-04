@@ -1,0 +1,180 @@
+METHOD returnset_create_entity.
+
+
+  DATA: ls_data         TYPE zb18str_g4_return_log,
+        ls_item         TYPE zb18t_g4_item,
+        ls_ret          TYPE zb18t_g4_rtlog,
+        lv_retid        TYPE zb18de_g4_returnid,
+        lv_fine         TYPE p DECIMALS 2 VALUE 0,
+        lv_edate        TYPE dats,
+        lv_rent_per_day TYPE p DECIMALS 2,
+        lv_days         TYPE i VALUE 0,
+        lv_rate         TYPE p DECIMALS 2,
+        lv_new_rent     TYPE p DECIMALS 2,
+        lv_value        TYPE tvarvc-low,
+        lv_total_return TYPE i..
+
+  DATA(lo_msg) = me->mo_context->get_message_container( ).               "Get message container
+
+  io_data_provider->read_entry_data(                                    " Read input data from UI (OData payload)
+    IMPORTING
+      es_data = ls_data ).
+
+
+  CALL FUNCTION 'NUMBER_GET_NEXT'                                       " Generate Return Log ID (Number Range)
+    EXPORTING
+      nr_range_nr = '1'
+      object      = 'ZB18_G4_RI'
+    IMPORTING
+      number      = lv_retid.
+
+  SELECT SINGLE rent_end_date,                                          " Get booking item details
+                total_rent_per_day
+         INTO (@lv_edate, @lv_rent_per_day)
+         FROM zb18t_g4_bkitem
+         WHERE booking_id = @ls_data-booking_id
+         AND item_id    = @ls_data-item_id.
+
+  IF sy-subrc <> 0.
+
+    lv_fine = 0.
+
+  ELSE.
+
+    lv_days = ls_data-actual_return_date - lv_edate.                    " Calculate delay days
+
+    IF lv_days < 0.                                                     " If returned early → no fine
+      lv_days = 0.
+    ENDIF.
+
+
+    SELECT SINGLE low                                                   " Get fine rate from TVARVC
+           INTO lv_value
+           FROM tvarvc
+           WHERE name = 'ZB18_G4_FINE'.
+
+    IF sy-subrc = 0.
+
+      lv_rate = lv_value.                                               " Convert CHAR → PACKED
+
+    ELSE.
+      lv_rate = 1.                                                      " Default fallback
+    ENDIF.
+
+    lv_new_rent = lv_rent_per_day + ( lv_rent_per_day * lv_rate / 100 )."  Calculate increased rent (fine)
+    lv_fine = lv_days * lv_new_rent.                                    "  Multiply by delay days
+
+  ENDIF.
+
+
+  ls_ret = VALUE #(                                                     " Prepare return log entry
+            return_log_id      = lv_retid
+            booking_id         = ls_data-booking_id
+            item_id            = ls_data-item_id
+            returned_quantity  = ls_data-returned_quantity
+            actual_return_date = ls_data-actual_return_date
+            calculated_fine    = lv_fine
+            currency           = ls_data-curr_key
+            status             = ls_data-status
+            unit               = ls_data-unit ).
+
+  "------------------------------------------------------------
+  " Validate return quantity
+  "------------------------------------------------------------
+
+  SELECT SINGLE quantity                                                " Get issued quantity
+         INTO @DATA(lv_issued_qty)
+         FROM zb18t_g4_bkitem
+         WHERE booking_id = @ls_data-booking_id
+         AND item_id    = @ls_data-item_id.
+
+  IF sy-subrc <> 0.
+
+    lo_msg->add_message(
+       iv_msg_type   = 'E'
+       iv_msg_id     = 'ZB18_G4_JRS'
+       iv_msg_number = '009'
+       ).
+
+    RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+      EXPORTING
+        message_container = lo_msg.
+  ENDIF.
+
+  SELECT SUM( returned_quantity )                                       " Get already returned quantity
+         INTO @DATA(lv_returned_qty)
+         FROM zb18t_g4_rtlog
+         WHERE booking_id = @ls_data-booking_id
+         AND item_id    = @ls_data-item_id.
+
+  IF lv_returned_qty IS INITIAL.
+    lv_returned_qty = 0.
+  ENDIF.
+
+  lv_total_return = lv_returned_qty + ls_data-returned_quantity.
+
+  IF lv_total_return > lv_issued_qty.                                   " if returning more than issued then raise an exceotion
+
+
+
+    lo_msg->add_message(
+      iv_msg_type   = 'E'
+      iv_msg_id     = 'ZB18_G4_JRS'
+      iv_msg_number = '008'                                             "  Return exceeds issued quantity'
+    ).
+
+    RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+      EXPORTING
+        message_container = lo_msg.
+
+  ENDIF.
+
+  INSERT zb18t_g4_rtlog FROM ls_ret.                                    " Insert into Return Log table
+
+  IF sy-subrc = 0.
+    "------------------------------------------------------------
+    " Update Item Stock based on condition
+    "------------------------------------------------------------
+    SELECT SINGLE  mandt,                                               "Get item master data
+                   item_id,
+                   created_by,
+                   item_name,
+                   category,
+                   type,
+                   total_qty,
+                   available_qty,
+                   quant_unit,
+                   rent_per_day,
+                   deposit,
+                   curr_key,
+                   image_url,
+                   item_lost,
+                   created_on,
+                   created_at
+            INTO   @ls_item
+            FROM   zb18t_g4_item
+            WHERE  item_id = @ls_data-item_id.
+
+    IF sy-subrc = 0.
+
+      CASE ls_data-item_condn.
+
+        WHEN 'G'.                                                       " Returned in good condition → increase available stock
+
+          ls_item-available_qty = ls_item-available_qty + ls_data-returned_quantity.
+
+        WHEN 'B'.                                                       " Damaged/Lost → increase lost count
+
+          ls_item-item_lost = ls_item-item_lost + ls_data-returned_quantity.
+
+      ENDCASE.
+
+      MODIFY zb18t_g4_item FROM ls_item.
+
+      er_entity = CORRESPONDING #( ls_ret ).
+
+    ENDIF.
+
+  ENDIF.
+
+ENDMETHOD.
